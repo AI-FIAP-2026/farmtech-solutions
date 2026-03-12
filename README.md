@@ -6,64 +6,34 @@
 
 <br>
 
-# Nome do projeto
+# Startup FarmTech Solutions
 
-## Nome do grupo
+## Grupo H.M.N.R.V.
 
 ## 👨‍🎓 Integrantes: 
-- <a href="https://www.linkedin.com/company/inova-fusca">Nome do integrante 1</a>
-- <a href="https://www.linkedin.com/company/inova-fusca">Nome do integrante 2</a>
-- <a href="https://www.linkedin.com/company/inova-fusca">Nome do integrante 3</a> 
-- <a href="https://www.linkedin.com/company/inova-fusca">Nome do integrante 4</a> 
-- <a href="https://www.linkedin.com/company/inova-fusca">Nome do integrante 5</a>
-
-## 👩‍🏫 Professores:
-### Tutor(a) 
-- <a href="https://www.linkedin.com/company/inova-fusca">Nome do Tutor</a>
-### Coordenador(a)
-- <a href="https://www.linkedin.com/company/inova-fusca">Nome do Coordenador</a>
-
+- <a href="https://github.com/nadnakvie">Heitor Exposito de Sousa</a>
+- <a href="https://www.linkedin.com/company/inova-fusca">Marco Antônio Rodrigues Siqueira</a>
+- <a href="https://www.linkedin.com/company/inova-fusca">Nádia Nakamura Vieira</a> 
+- <a href="https://www.linkedin.com/company/inova-fusca">Rafael Bassani</a> 
+- <a href="https://www.linkedin.com/company/inova-fusca">Vinicius Xavier da Silva</a>
 
 ## 📜 Descrição
 
-*Descreva seu projeto com base no texto do PBL (até 600 palavras)*
+Este projeto foi desenvolvido pela equipe 54 da FIAP, com o objetivo de criar uma aplicação em Python voltada para apoiar a gestão de culturas agrícolas dentro do contexto da Agricultura Digital. A aplicação foi projetada para auxiliar produtores rurais na organização de dados relacionados ao plantio, manejo de insumos e análise de custos e lucros das lavouras.
 
+O sistema foi desenvolvido considerando duas culturas agrícolas, sendo elas a soja e [___] . A aplicação permite que o usuário registre informações sobre a plantação, como área cultivada, produtos utilizados no manejo da lavoura e métodos de aplicação de insumos.
 
-## 📁 Estrutura de pastas
-
-Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
-
-- <b>.github</b>: Nesta pasta ficarão os arquivos de configuração específicos do GitHub que ajudam a gerenciar e automatizar processos no repositório.
-
-- <b>assets</b>: aqui estão os arquivos relacionados a elementos não-estruturados deste repositório, como imagens.
-
-- <b>config</b>: Posicione aqui arquivos de configuração que são usados para definir parâmetros e ajustes do projeto.
-
-- <b>document</b>: aqui estão todos os documentos do projeto que as atividades poderão pedir. Na subpasta "other", adicione documentos complementares e menos importantes.
-
-- <b>scripts</b>: Posicione aqui scripts auxiliares para tarefas específicas do seu projeto. Exemplo: deploy, migrações de banco de dados, backups.
-
-- <b>src</b>: Todo o código fonte criado para o desenvolvimento do projeto ao longo das 7 fases.
-
-- <b>README.md</b>: arquivo que serve como guia e explicação geral sobre o projeto (o mesmo que você está lendo agora).
+Os dados da aplicação estão organizados utilizando vetores (info e info2), possibilitando o armazenamento estruturado das informações referentes às culturas, insumos e operações agrícolas, para serem trabalhados e analisados, futuramente, em R. Além disso, o sistema conta com um menu interativo no terminal, que permite ao usuário navegar entre diferentes funcionalidades da aplicação. Para vizualizar os dados, utilize o comando print(info,info2) que seguirá a ordem: areaTotal; herbicida; pesticida; meiodeaplicacao; nome; lucro, pesoTotal, qtdherbicida, qtdpesticida, gastosIniciais.
 
 ## 🔧 Como executar o código
 
-*Acrescentar as informações necessárias sobre pré-requisitos (IDEs, serviços, bibliotecas etc.) e instalação básica do projeto, descrevendo eventuais versões utilizadas. Colocar um passo a passo de como o leitor pode baixar o seu código e executá-lo a partir de sua máquina ou seu repositório. Considere a explicação organizada em fase.*
+O código funciona sem nenhuma biblioteca e exige somente o uso do python, de preferência em alguma IDE.
 
 
 ## 🗃 Histórico de lançamentos
 
-* 0.5.0 - XX/XX/2024
-    * 
-* 0.4.0 - XX/XX/2024
-    * 
-* 0.3.0 - XX/XX/2024
-    * 
-* 0.2.0 - XX/XX/2024
-    * 
-* 0.1.0 - XX/XX/2024
-    *
+* 0.2.0 - 12/03/2026
+* 0.1.0 - 07/03/2026
 
 ## 📋 Licença
 
