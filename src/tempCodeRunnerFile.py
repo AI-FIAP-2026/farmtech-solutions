@@ -1,0 +1,1 @@
+eaTotal = calcularArea()
