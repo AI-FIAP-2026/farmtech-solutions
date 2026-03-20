@@ -9,27 +9,26 @@ cultura = {
               "herbicidaqtd": 0, "pesticidaqtd": 0, "fertilizanteqtd": 0 }, 
 }
 
-flagDados = 0
+
 meiodeaplicacao = ''
 gastoTotal = 0
-flagCulturas = 0
 
-nome = input("Digite seu nome: ").strip().title()
-def calculoAreaTotal():
+nome = input("Digite seu nome: ").strip().title() #Padroniza o nome
+def calculoAreaTotal(): #Soma as áreas
     global cultura
-    return cultura['Soja']['area'] + cultura['Cafe']['area']
-def calculoGastoTotal():
+    return cultura['Soja']['area'] + cultura['Cafe']['area'] 
+def calculoGastoTotal(): #Soma os gastos
     global cultura
     return cultura['Soja']['gastos'] + cultura['Cafe']['gastos']
-def price(i,price, quant):
+def price(i,price, quant): #Calcula o preço dos manejos agrícolas
     global cultura
     return cultura[i]['gastos'] + price *  quant * cultura[i]['area']
 def financeiro(i):
     global cultura
     while True:
-        if cultura[i]['area'] == 0:
-            cultura[i]['area'] = calcularArea()
-            cultura[i]['peso'] = cultura[i]['PesoHectar']*cultura[i]['area']
+        if cultura[i]['area'] == 0: #Caso a area tenha sido registrada
+            cultura[i]['area'] = calcularArea() #Salva a area no dicionario
+            cultura[i]['peso'] = cultura[i]['PesoHectar']*cultura[i]['area'] #Salva o peso no dicionario
             print(
                 f"Serão cultivadas {cultura[i]['peso']/1000:.1f} ton em {cultura[i]['area']} ha," 
                 f"\n ou {cultura[i]['peso']*0.94/1000:.1f} ton, contabilizando perdas")
@@ -38,13 +37,13 @@ def financeiro(i):
                 f" ou  {cultura[i]['lucro']*0.94:.2f}R$, contabilizando perdas")
             break
 
-        else:
+        else: #Caso a area ja tenha sido registrada
             print(f"Área Total: {cultura[i]['area']} ha\n"
                 f"Peso Estimado: {(cultura[i]['peso'] +(cultura[i]['peso']*0.94))/2000:.1f}ton\n"
                 f"Lucro Estimado: {(cultura[i]['lucro']+(cultura[i]['lucro']*0.94))/2:.2f}R$")
             alterar = input("Deseja alterar os dados?: ").upper()
 
-            if alterar == "SIM" or alterar == "S":
+            if alterar == "SIM" or alterar == "S": #Caso o usuario deseje alterar os dados
                 cultura[i]['area']
             else:
                 break
@@ -157,31 +156,31 @@ def pesticidas(i):
                 break
 def fertFunc(i):        
     global cultura
-    if i == "Soja":
-        while True:
-            if cultura['Soja']['fertilizante'] == '':
+    if i == "Soja": #Caso esteja rodando como soja
+        while True: #Loop para previnir inputs inválidos
+            if cultura['Soja']['fertilizante'] == '': #Caso o dado não tenha sido registrado
                 problema = int(input("O seu solo possui:\n[1] Ph menor que 6\n"
                                     "[2] Mal otimização da fixação biológica\n"))
-                if problema == 1:
+                if problema == 1: #Caso tenha selecionado o primeiro problema
                     print("Seu fertilizante ideal é o Calcário!")
                     cultura['Soja']['fertilizante'] = " Calcário"
                     cultura['Soja']['fertilizanteqtd'] = 3000
-                    cultura['Soja']['gastos'] = price(i,0.104,cultura['Soja']['fertilizanteqtd'])
-                    break
-                elif problema == 2:
+                    cultura['Soja']['gastos'] = price(i,0.104,cultura['Soja']['fertilizanteqtd'])#Calculo de gastos com manejo
+                    break #Sair do loop, pois o dado foi salvo
+                elif problema == 2: #Caso tenha selecionado o primeiro problema
                     print("Seu fertilizante ideal são os Inoculantes Rhizobium!")
                     cultura['Soja']['fertilizante'] = " Inoculantes Rhizobium"
                     cultura['Soja']['fertilizanteqtd'] = 0.2
-                    cultura['Soja']['gastos'] = price(i,130,cultura['Soja']['fertilizanteqtd'])
-                    break
-                else:
+                    cultura['Soja']['gastos'] = price(i,130,cultura['Soja']['fertilizanteqtd']) #Calculo de gastos com manejo
+                    break #Sair do loop, pois o dado foi salvo
+                else: #Caso tenha digitado um valor inválido
                     print("--OPÇÃO INVÁLIDA--")
-                    continue
-            else:
+                    continue #Resumo o loop 
+            else: #Caso o dado já tenha sido registrado
                 print(f"---Seu fertilizante ideal é o {cultura['Soja']['fertilizante']}!---")
-    else:
-        while True:
-            if cultura['Cafe']['fertilizante'] == '':
+    else: #Caso esteja rodando como café
+        while True: #Loop para previnir inputs inválidos
+            if cultura['Cafe']['fertilizante'] == '': #Caso o dado não tenha sido registrado
                 problema = int(input("O seu solo precisa de adubo:\n[1] NPK\n"
                                     "[2] A base de magnésio\n"))
                 if problema == 1:
@@ -214,21 +213,21 @@ def perfil(i):
     )
 def calcularArea():
     print("\n---- Calculadora de Área ----")
-    while True:
+    while True: #Loop para previnir inputs inválidos
         forma = int(input("[1] Retângulo\n[2] Triângulo\n[3] Círculo\n"))
         if forma == 1:
-            try:
+            try: #Pega medidas 
                 largura = float(input("Digite o valor da largura em ha: "))
                 comprimento = float(input("Digite o valor do comprimento em ha: "))
-            except ValueError:
+            except ValueError: #Garante que o valor digitado seja válido
                 print("Entrada inválida")
                 continue
-            return largura*comprimento
+            return largura*comprimento #Retorna a área total
         elif forma == 2:
-            try:
+            try: #Pega medidas...
                 base = float(input("Digite o valor da base em ha: "))
                 altura = float(input("Digite o valor da altura em ha: "))
-            except ValueError:
+            except ValueError: 
                 print("Entrada inválida")
                 continue
             return base*altura/2
@@ -247,8 +246,8 @@ def menu(i):
     print(f"=======MENU {i}=======\n")
     tela = int(input("Digite em qual tela você quer entrar: \n[1]- Financeiro \n"
     "[2]- Herbicidas:\n[3]- Pesticidas \n[4]- Fertilizante\n[5]- Perfil\n"))
-    match tela:
-        case 1:
+    match tela: #Entra na tela de acordo com o meio de cultura (soja ou café)
+        case 1: 
             financeiro(i)
         case 2:
             herbicidas(i)
@@ -260,7 +259,7 @@ def menu(i):
             perfil(i)
         case _:
             print("opção inválida")
-def preenchido(i):
+def preenchido(i): #Sinaliza quando todas as info do dicionario forem preenchidas
     return (
         cultura[i]["area"] != 0 and
         cultura[i]["herbicida"] != "" and
@@ -270,12 +269,12 @@ def preenchido(i):
 
     
 for i in cultura: 
-    while not preenchido(i):
-        menu(i)
-    print(f"=====Você digitou todos os dados de {i}======")
+    while not preenchido(i): #Enqnt os dados não tiverem sido 100% preenchidos
+        menu(i) #Exibir o menu do meio de cultura
+    print(f"=====Você digitou todos os dados de {i}======") #Quando os dados tiverem sido preenchidos
     print(perfil(i))
 
-    
+
 areaTotal = calculoAreaTotal()
 gastoTotal = calculoGastoTotal()
 def aplicar(): # tirar do loop for
@@ -309,6 +308,7 @@ def aplicar(): # tirar do loop for
 aplicar()
 
 print(cultura, f"\nGasto Total: {gastoTotal}\nArea Aproximada: {areaTotal}")
+print(cultura)
 
     
     
