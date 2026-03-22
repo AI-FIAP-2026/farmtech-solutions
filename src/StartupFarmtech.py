@@ -114,14 +114,14 @@ def cria_cultura(peso, preco):
         "lucro": 0,   # em R$
         "gastos": 0,  # em R$
 
-        # Vetor de insumos - cada elemento ocupa uma posição
+        # Vetor de insumos
         "insumos": [
             {"tipo": "herbicida", "nome": "", "qtd_por_ha": 0,
-                "preco_unitario": 0},      # posição [0]
+                "preco_unitario": 0},
             {"tipo": "pesticida", "nome": "", "qtd_por_ha": 0,
-                "preco_unitario": 0},      # posição [1]
+                "preco_unitario": 0},
             {"tipo": "fertilizante", "nome": "", "qtd_por_ha": 0,
-                "preco_unitario": 0},   # posição [2]
+                "preco_unitario": 0},
         ],
 
         "PESO_POR_HA": peso,
@@ -140,9 +140,9 @@ PRECO_CAFE = 72800  # reais/ha
 # Vetor de culturas - cada elemento é uma cultura com seus dados
 culturas = [
     {"nome": "Soja", "dados": cria_cultura(
-        PESO_SOJA, PRECO_SOJA)},      # posição [0]
+        PESO_SOJA, PRECO_SOJA)},
     {"nome": "Café", "dados": cria_cultura(
-        PESO_CAFE, PRECO_CAFE)},      # posição [1]
+        PESO_CAFE, PRECO_CAFE)},
 ]
 
 meio_de_aplicacao = ''
@@ -167,13 +167,15 @@ def selecionar_cultura():
     print(f"{VERDE}{NEGRITO}=== SELEÇÃO DE CULTURA ==={RESET}\n")
 
     for indice, cultura in enumerate(culturas):
-        print(f"  [{indice}] {cultura['nome']}")
+        print(f"  [{indice+1}] {cultura['nome']}")
+
+    print("  [0] Voltar")
 
     indice = ler_int(
-        f"\nEscolha a cultura (0-{len(culturas)-1}): ", 0, len(culturas)-1
+        f"\nEscolha a cultura: ", 0, len(culturas)
     )
 
-    return indice
+    return indice - 1
 
 
 def calculo_area_total():
@@ -216,7 +218,7 @@ def financeiro(indice_cultura):
             limpar_tela()
 
             print(
-                f"{VERDE}{NEGRITO}=== FINANCEIRO - {nome_cultura.upper()} ==={RESET}\n")
+                f"{VERDE}{NEGRITO}=== FINANCEIRO - {nome_cultura.upper()} ==={RESET}")
 
             dados['area'] = calcular_area()
             dados['peso'] = dados['PESO_POR_HA'] * dados['area']
@@ -266,7 +268,7 @@ def herbicidas(indice_cultura):
 
         print(f"{VERDE}{NEGRITO}=== HERBICIDA {nome_cultura.upper()} ==={RESET}")
         print(
-            f"Selecionado: {AMARELO}{insumo_herbicida['nome']}{RESET} (posição [0])")
+            f"Selecionado: {AMARELO}{insumo_herbicida['nome']}{RESET}")
 
         input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
 
@@ -361,7 +363,7 @@ def pesticidas(indice_cultura):
 
         print(f"{VERDE}{NEGRITO}=== PESTICIDA {nome_cultura.upper()} ==={RESET}")
         print(
-            f"Selecionado: {AMARELO}{insumo_pesticida['nome'].strip()}{RESET} (posição [1])")
+            f"Selecionado: {AMARELO}{insumo_pesticida['nome'].strip()}{RESET}")
 
         input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
 
@@ -446,7 +448,7 @@ def fertilizantes(indice_cultura):
 
         print(f"{VERDE}{NEGRITO}=== FERTILIZANTE {nome_cultura.upper()} ==={RESET}")
         print(
-            f"Selecionado: {AMARELO}{insumo_fertilizante['nome'].strip()}{RESET} (posição [2])")
+            f"Selecionado: {AMARELO}{insumo_fertilizante['nome'].strip()}{RESET}")
 
         input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
 
@@ -532,21 +534,21 @@ def perfil(indice_cultura):
 
     print(f"{AMARELO}Agricultor:{RESET} {nome}")
     print(
-        f"{AMARELO}Cultura:{RESET} {nome_cultura} (índice [{indice_cultura}])")
+        f"{AMARELO}Cultura:{RESET} {nome_cultura}")
 
     print(f"\n{NEGRITO}----- DADOS FINANCEIROS -----{RESET}")
     print(f"  Área cultivável:...{dados['area']:.2f} ha")
     print(f"  Peso total:........{dados['peso']/1000:.2f} ton")
     print(f"  Receita estimada:..R$ {dados['lucro']:.2f}")
 
-    print(f"\n{NEGRITO}----- MANEJO DE INSUMOS (VETOR) -----{RESET}")
-    print(f"  Herbicida [0]:......{dados['insumos'][0]['nome'].strip()}")
+    print(f"\n{NEGRITO}----- MANEJO DE INSUMOS -----{RESET}")
+    print(f"  Herbicida:.........{dados['insumos'][0]['nome'].strip()}")
     print(
         f"  Quantidade:........{dados['insumos'][0]['qtd_por_ha']*dados['area']:.1f} g/ha")
-    print(f"  Pesticida [1]:......{dados['insumos'][1]['nome'].strip()}")
+    print(f"  Pesticida:.........{dados['insumos'][1]['nome'].strip()}")
     print(
         f"  Quantidade:........{dados['insumos'][1]['qtd_por_ha']*dados['area']:.1f} ml/ha")
-    print(f"  Fertilizante [2]:...{dados['insumos'][2]['nome'].strip()}")
+    print(f"  Fertilizante:......{dados['insumos'][2]['nome'].strip()}")
     print(
         f"  Quantidade:........{dados['insumos'][2]['qtd_por_ha']*dados['area']:.1f} kg/ha")
 
@@ -604,9 +606,9 @@ def atualizar_dados(indice_cultura):
     opcao = ler_int(
         "Qual dado deseja atualizar?\n"
         "  [1] Área de plantio\n"
-        "  [2] Herbicida (posição [0])\n"
-        "  [3] Pesticida (posição [1])\n"
-        "  [4] Fertilizante (posição [2])\n"
+        "  [2] Herbicida\n"
+        "  [3] Pesticida\n"
+        "  [4] Fertilizante\n"
         "Opção: ", 1, 4
     )
 
@@ -661,7 +663,7 @@ def deletar_dados(indice_cultura):
 
     opcao = ler_int(
         "O que deseja deletar?\n"
-        "  [1] Apenas um insumo (posição específica do vetor)\n"
+        "  [1] Apenas um insumo\n"
         "  [2] Todos os dados da cultura\n"
         "Opção: ", 1, 2
     )
@@ -671,9 +673,9 @@ def deletar_dados(indice_cultura):
     if opcao == 1:  # Deletar um insumo específico por posição no vetor
         insumo_idx = ler_int(
             "Qual insumo deseja deletar?\n"
-            "  [0] Herbicida (posição [0])\n"
-            "  [1] Pesticida (posição [1])\n"
-            "  [2] Fertilizante (posição [2])\n"
+            "  [0] Herbicida\n"
+            "  [1] Pesticida\n"
+            "  [2] Fertilizante\n"
             "Opção: ", 0, 2
         )
 
@@ -729,22 +731,21 @@ def exibir_dados(indice_cultura):
     nome_cultura = culturas[indice_cultura]['nome']
 
     print(f"{VERDE}{NEGRITO}=== SAÍDA DE DADOS - {nome_cultura.upper()} ==={RESET}\n")
-    print(f"Cultura no índice [{indice_cultura}] do vetor\n")
 
     if not esta_preenchida(indice_cultura):
         print(
             f"{AMARELO}⚠ Alguns dados da cultura ainda não foram preenchidos.{RESET}\n")
 
-    print(f"{NEGRITO}Dados Financeiros:{RESET}")
+    print(f"{NEGRITO}Dados financeiros:{RESET}")
     print(f"  Área: {dados['area']:.2f} ha")
     print(f"  Peso estimado: {dados['peso']/1000:.2f} ton")
     print(f"  Lucro: R$ {dados['lucro']:.2f}")
     print(f"  Gastos com insumos: R$ {dados['gastos']:.2f}\n")
 
-    print(f"{NEGRITO}Insumos Utilizados (Vetor):{RESET}")
-    for idx, insumo in enumerate(dados["insumos"]):
+    print(f"{NEGRITO}Insumos utilizados:{RESET}")
+    for insumo in dados["insumos"]:
         nome = insumo['nome'].strip() if insumo['nome'] else "(não definido)"
-        print(f"  [{idx}] {insumo['tipo']}: {nome}")
+        print(f"  {insumo['tipo'].title()}: {nome}")
 
     input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
 
@@ -755,7 +756,7 @@ def entrada_dados():
     while True:
         indice = selecionar_cultura()
 
-        if indice == 0 or indice == 1:
+        if indice >= 0 and indice < len(culturas):
             limpar_tela()
             menu(indice)
         else:
@@ -795,7 +796,7 @@ def atualizacao_dados():
     while True:
         indice = selecionar_cultura()
 
-        if indice == 0 or indice == 1:
+        if indice >= 0 and indice < len(culturas):
             atualizar_dados(indice)
         else:
             break
@@ -807,7 +808,7 @@ def delecao_dados():
     while True:
         indice = selecionar_cultura()
 
-        if indice == 0 or indice == 1:
+        if indice >= 0 and indice < len(culturas):
             deletar_dados(indice)
         else:
             break
@@ -822,7 +823,6 @@ def menu(indice_cultura):
         nome_cultura = culturas[indice_cultura]['nome']
 
         print(f"{VERDE}{NEGRITO}=== MENU PRINCIPAL - {nome_cultura.upper()} ==={RESET}")
-        print(f"Posição no vetor: [{indice_cultura}]\n")
 
         completo = esta_preenchida(indice_cultura)
 
@@ -834,9 +834,9 @@ def menu(indice_cultura):
         opcao = ler_int(
             "Escolha uma opção:\n"
             "  [1] Financeiro\n"
-            "  [2] Herbicida [0]\n"
-            "  [3] Pesticida [1]\n"
-            "  [4] Fertilizante [2]\n"
+            "  [2] Herbicida\n"
+            "  [3] Pesticida\n"
+            "  [4] Fertilizante\n"
             "  [5] Perfil\n"
             + opcao_extra +
             "Opção: "
@@ -926,7 +926,7 @@ def resumo_final():
     for indice, cultura in enumerate(culturas):
         dados = cultura['dados']
         print(
-            f"{NEGRITO}--- {cultura['nome'].upper()} (índice [{indice}]) ---{RESET}")
+            f"{NEGRITO}--- {cultura['nome'].upper()} ---{RESET}")
         print(f"  Área:           {dados['area']:.2f} ha")
         print(f"  Produção:       {dados['peso']/1000:.2f} ton")
         print(f"  Receita:        R$ {dados['lucro']:.2f}")
