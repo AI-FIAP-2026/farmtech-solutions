@@ -5,40 +5,42 @@ import time
 """ Caracteres ANSI para estilização no terminal """
 
 # Exibe o texto que segue na cor indicada
-VERDE = '\033[92m'
-AMARELO = '\033[93m'
-AZUL = '\033[94m'
-VERMELHO = '\033[91m'
+VERDE = "\033[92m"
+AMARELO = "\033[93m"
+AZUL = "\033[94m"
+VERMELHO = "\033[91m"
 
 # Torna o texto negrito
-NEGRITO = '\033[1m'
+NEGRITO = "\033[1m"
 
 # Restaura o estilo padrão
-RESET = '\033[0m'
+RESET = "\033[0m"
 
 """ Caracteres ANSI para manipulação de cursor e limpeza de linhas """
 
 # Move o cursor uma linha para cima
-CURSOR_UP = '\033[A'
+CURSOR_UP = "\033[A"
 
 # Limpa a linha inteira onde o cursor está
-LIMPAR_LINHA = '\033[2K'
+LIMPAR_LINHA = "\033[2K"
 
 # Volta o cursor para o início da linha
-INICIO_LINHA = '\r'
+INICIO_LINHA = "\r"
 
 
 # Funções auxiliares
 
+
 def limpar_tela():
     """Limpa a tela do terminal de forma multiplataforma"""
-    os.system('clear' if os.name == 'posix' else 'cls')
+    os.system("clear" if os.name == "posix" else "cls")
 
 
 def limpar_linhas(numero_linhas=1):
     """Limpa o conteúdo das linhas anteriores do terminal"""
-    print(f"{CURSOR_UP}{LIMPAR_LINHA}{INICIO_LINHA}" *
-          numero_linhas, end='', flush=True)
+    print(
+        f"{CURSOR_UP}{LIMPAR_LINHA}{INICIO_LINHA}" * numero_linhas, end="", flush=True
+    )
 
 
 def ler_int(pergunta, minimo=None, maximo=None):
@@ -103,27 +105,23 @@ def ler_float(pergunta, minimo=None):
 
 def atualiza_gastos(dados_cultura, preco, quantidade):
     """Atualiza os gastos com manejos agrícolas da cultura indicada"""
-    dados_cultura['gastos'] += preco * quantidade * dados_cultura['area']
+    dados_cultura["gastos"] += preco * quantidade * dados_cultura["area"]
 
 
 def cria_cultura(peso, preco):
     """Estrutura de dados das culturas com insumos em vetor"""
     return {
-        "area": 0,    # em ha
-        "peso": 0,    # em kg
-        "lucro": 0,   # em R$
+        "area": 0,  # em ha
+        "peso": 0,  # em kg
+        "lucro": 0,  # em R$
         "gastos": 0,  # em R$
-
         # Vetor de insumos
         "insumos": [
-            {"tipo": "herbicida", "nome": "", "qtd_por_ha": 0,
-                "preco_unitario": 0},
-            {"tipo": "pesticida", "nome": "", "qtd_por_ha": 0,
-                "preco_unitario": 0},
-            {"tipo": "fertilizante", "nome": "", "qtd_por_ha": 0,
-                "preco_unitario": 0},
+            {"tipo": "herbicida", "nome": "", "qtd_por_ha": 0, "preco_unitario": 0},
+            {"tipo": "pesticida", "nome": "", "qtd_por_ha": 0, "preco_unitario": 0},
+            {"tipo": "fertilizante", "nome": "",
+                "qtd_por_ha": 0, "preco_unitario": 0},
         ],
-
         "PESO_POR_HA": peso,
         "PRECO_POR_HA": preco,
     }
@@ -131,23 +129,21 @@ def cria_cultura(peso, preco):
 
 # Variáveis
 
-PESO_SOJA = 3200    # kg/ha
-PRECO_SOJA = 6300   # reais/ha
+PESO_SOJA = 3200  # kg/ha
+PRECO_SOJA = 6300  # reais/ha
 
-PESO_CAFE = 2300    # kg/ha
+PESO_CAFE = 2300  # kg/ha
 PRECO_CAFE = 72800  # reais/ha
 
 # Vetor de culturas - cada elemento é uma cultura com seus dados
 culturas = [
-    {"nome": "Soja", "dados": cria_cultura(
-        PESO_SOJA, PRECO_SOJA)},
-    {"nome": "Café", "dados": cria_cultura(
-        PESO_CAFE, PRECO_CAFE)},
+    {"nome": "Soja", "dados": cria_cultura(PESO_SOJA, PRECO_SOJA)},
+    {"nome": "Café", "dados": cria_cultura(PESO_CAFE, PRECO_CAFE)},
 ]
 
-meio_de_aplicacao = ''
-gasto_total = 0    # em reais
-area_total = 0     # em hectares
+meio_de_aplicacao = ""
+gasto_total = 0  # em reais
+area_total = 0  # em hectares
 
 
 def listar_culturas():
@@ -167,13 +163,11 @@ def selecionar_cultura():
     print(f"{VERDE}{NEGRITO}=== SELEÇÃO DE CULTURA ==={RESET}\n")
 
     for indice, cultura in enumerate(culturas):
-        print(f"  [{indice+1}] {cultura['nome']}")
+        print(f"  [{indice + 1}] {cultura['nome']}")
 
     print("  [0] Voltar")
 
-    indice = ler_int(
-        f"\nEscolha a cultura: ", 0, len(culturas)
-    )
+    indice = ler_int(f"\nEscolha a cultura: ", 0, len(culturas))
 
     return indice - 1
 
@@ -182,7 +176,7 @@ def calculo_area_total():
     """Soma as áreas de todas as culturas no vetor"""
     total = 0
     for cultura in culturas:
-        total += cultura['dados']['area']
+        total += cultura["dados"]["area"]
     return total
 
 
@@ -190,93 +184,69 @@ def calculo_gasto_total():
     """Soma os gastos de todas as culturas no vetor"""
     total = 0
     for cultura in culturas:
-        total += cultura['dados']['gastos']
+        total += cultura["dados"]["gastos"]
     return total
 
 
 def esta_preenchida(indice_cultura):
     """Verifica se todos os dados da cultura estão preenchidos"""
 
-    dados = culturas[indice_cultura]['dados']
+    dados = culturas[indice_cultura]["dados"]
     return (
-        dados["area"] != 0 and
-        dados["insumos"][0]['nome'] != "" and
-        dados["insumos"][1]['nome'] != "" and
-        dados["insumos"][2]['nome'] != ""
+        dados["area"] != 0
+        and dados["insumos"][0]["nome"] != ""
+        and dados["insumos"][1]["nome"] != ""
+        and dados["insumos"][2]["nome"] != ""
+    )
+
+
+def esta_vazia(indice_cultura):
+    """Verifica se a cultura está vazia (sem dados cadastrados)"""
+
+    dados = culturas[indice_cultura]["dados"]
+    return (
+        dados["area"] == 0
+        and dados["insumos"][0]["nome"] == ""
+        and dados["insumos"][1]["nome"] == ""
+        and dados["insumos"][2]["nome"] == ""
     )
 
 
 def financeiro(indice_cultura):
     """Exibe menu financeiro da cultura no índice indicado"""
 
-    # Salva o dicionário da cultura numa variável local para referência simplificada
-    dados = culturas[indice_cultura]['dados']
-    nome_cultura = culturas[indice_cultura]['nome']
+    dados = culturas[indice_cultura]["dados"]
+    nome_cultura = culturas[indice_cultura]["nome"]
 
-    while True:
-        if dados['area'] == 0:  # Caso a área não tenha sido registrada
-            limpar_tela()
+    limpar_tela()
 
-            print(
-                f"{VERDE}{NEGRITO}=== FINANCEIRO - {nome_cultura.upper()} ==={RESET}")
+    print(f"{VERDE}{NEGRITO}=== FINANCEIRO - {nome_cultura.upper()} ==={RESET}")
 
-            dados['area'] = calcular_area()
-            dados['peso'] = dados['PESO_POR_HA'] * dados['area']
+    dados["area"] = calcular_area()
+    dados["peso"] = dados["PESO_POR_HA"] * dados["area"]
 
-            print(f"\n{AMARELO}Produção Estimada:{RESET}")
-            print(f"  Peso total:  {dados['peso']/1000:.1f} tons")
-            print(
-                f"  Com perdas:  {dados['peso']*0.94/1000:.1f} tons (6% de perdas)")
+    print(f"\n{AMARELO}Produção Estimada:{RESET}")
+    print(f"  Peso total:  {dados['peso'] / 1000:.1f} tons")
+    print(
+        f"  Com perdas:  {dados['peso'] * 0.94 / 1000:.1f} tons (6% de perdas)")
 
-            dados['lucro'] = dados['PRECO_POR_HA'] * dados['area']
+    dados["lucro"] = dados["PRECO_POR_HA"] * dados["area"]
 
-            print(f"\n{AMARELO}Receita Estimada:{RESET}")
-            print(f"  Sem descontos: R$ {dados['lucro']:.2f}")
-            print(f"  Com perdas:    R$ {dados['lucro']*0.94:.2f}")
+    print(f"\n{AMARELO}Receita Estimada:{RESET}")
+    print(f"  Sem descontos: R$ {dados['lucro']:.2f}")
+    print(f"  Com perdas:    R$ {dados['lucro'] * 0.94:.2f}")
 
-            input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
-
-            break
-        else:
-            print(
-                f"{VERDE}{NEGRITO}=== DADOS FINANCEIROS - {nome_cultura.upper()} ==={RESET}\n")
-            print(f"  Área Total:     {dados['area']:.2f} ha")
-            print(
-                f"  Peso Estimado:  {(dados['peso']+(dados['peso']*0.94))/2000:.1f} ton")
-            print(
-                f"  Lucro Estimado: R$ {(dados['lucro']+(dados['lucro']*0.94))/2:.2f}")
-
-            alterar = input(
-                f"\n{AZUL}Deseja atualizar a área? (s/n): {RESET}").strip().upper()
-
-            if alterar in ["SIM", "S"]:
-                dados['area'] = 0
-            else:
-                break
+    input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
 
 
 def herbicidas(indice_cultura):
     """Exibe menu de escolha de herbicida para a cultura no índice indicado"""
 
-    # Salva o dicionário da cultura numa variável local para referência simplificada
-    dados = culturas[indice_cultura]['dados']
-    nome_cultura = culturas[indice_cultura]['nome']
-    # Herbicida está na posição [0] do vetor
-    insumo_herbicida = dados['insumos'][0]
+    nome_cultura = culturas[indice_cultura]["nome"]
 
-    if insumo_herbicida['nome'] != '':  # Se o herbicida já foi escolhido
-
-        print(f"{VERDE}{NEGRITO}=== HERBICIDA {nome_cultura.upper()} ==={RESET}")
-        print(
-            f"Selecionado: {AMARELO}{insumo_herbicida['nome']}{RESET}")
-
-        input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
-
-        return  # Sai da função cedo
-
-    # Senão, exibe o menu de seleção
-
-    print(f"{VERDE}{NEGRITO}=== SELEÇÃO DE HERBICIDA - {nome_cultura.upper()} ==={RESET}\n")
+    print(
+        f"{VERDE}{NEGRITO}=== SELEÇÃO DE HERBICIDA - {nome_cultura.upper()} ==={RESET}\n"
+    )
 
     if nome_cultura == "Soja":
         escolher_herbicida_soja(indice_cultura)
@@ -290,88 +260,79 @@ def escolher_herbicida_soja(indice_cultura):
     """Exibe opções para a escolha de um herbicida para a cultura de Soja"""
 
     # Salva o dicionário da cultura numa variável local para referência simplificada
-    dados = culturas[indice_cultura]['dados']
-    insumo = dados['insumos'][0]  # Herbicida na posição [0]
+    dados = culturas[indice_cultura]["dados"]
+    herbicida = dados["insumos"][0]
 
     tipo_grama = ler_int(
-        "Problema com gramíneas:\n  [1] Curtas\n  [2] Longas\nOpção: ", 1, 2)
+        "Problema com gramíneas:\n  [1] Curtas\n  [2] Longas\nOpção: ", 1, 2
+    )
 
     if tipo_grama == 1:  # Se o problema for com gramíneas curtas
         periodo = ler_int(
-            "Período de aplicação:\n  [1] Entre-safras\n  [2] Outono\nOpção: ", 1, 2)
+            "Período de aplicação:\n  [1] Entre-safras\n  [2] Outono\nOpção: ", 1, 2
+        )
 
         if periodo == 1:  # Se o período for entre-safras
-            insumo['nome'] = "Flumioxazin"
-            insumo['qtd_por_ha'] = 80  # gramas
-            insumo['preco_unitario'] = 3.0
+            herbicida["nome"] = "Flumioxazin"
+            herbicida["qtd_por_ha"] = 80  # gramas
+            herbicida["preco_unitario"] = 3.0
 
             atualiza_gastos(dados, 3.0, 80)
         else:  # Se o período for outono
-            insumo['nome'] = "Diclosulam"
-            insumo['qtd_por_ha'] = 35  # gramas
-            insumo['preco_unitario'] = 1.2
+            herbicida["nome"] = "Diclosulam"
+            herbicida["qtd_por_ha"] = 35  # gramas
+            herbicida["preco_unitario"] = 1.2
 
             atualiza_gastos(dados, 1.2, 35)
     else:  # Se o problema for com gramíneas longas
-        insumo['nome'] = "Metsulfuron"
-        insumo['qtd_por_ha'] = 3.5
-        insumo['preco_unitario'] = 3.6
+        herbicida["nome"] = "Metsulfuron"
+        herbicida["qtd_por_ha"] = 3.5
+        herbicida["preco_unitario"] = 3.6
 
         atualiza_gastos(dados, 3.6, 3.5)
 
     print(
-        f"{VERDE}✓ Herbicida selecionado para Soja: {insumo['nome']}{RESET}")
+        f"{VERDE}✓ Herbicida selecionado para Soja: {herbicida['nome']}{RESET}")
 
 
 def escolher_herbicida_cafe(indice_cultura):
     """Exibe opções para a escolha de um herbicida para a cultura de Café"""
 
     # Salva o dicionário da cultura numa variável local para referência simplificada
-    dados = culturas[indice_cultura]['dados']
-    insumo = dados['insumos'][0]  # Herbicida na posição [0]
+    dados = culturas[indice_cultura]["dados"]
+    herbicida = dados["insumos"][0]
 
     tipo_praga = ler_int(
-        "Problema com pragas:\n  [1] Bidens pilosa\n  [2] Digitaria insularis\nOpção: ", 1, 2)
+        "Problema com pragas:\n  [1] Bidens pilosa\n  [2] Digitaria insularis\nOpção: ",
+        1,
+        2,
+    )
 
     if tipo_praga == 1:  # Se a praga for Bidens pilosa
-        insumo['nome'] = "Flumyzin"
-        insumo['qtd_por_ha'] = 150  # mililitros
-        insumo['preco_unitario'] = 0.5
+        herbicida["nome"] = "Flumyzin"
+        herbicida["qtd_por_ha"] = 150  # mililitros
+        herbicida["preco_unitario"] = 0.5
 
         atualiza_gastos(dados, 0.5, 150)
     else:  # Se a praga for Digitaria insularis
-        insumo['nome'] = "Cletodim"
-        insumo['qtd_por_ha'] = 450  # mililitros
-        insumo['preco_unitario'] = 0.15
+        herbicida["nome"] = "Cletodim"
+        herbicida["qtd_por_ha"] = 450  # mililitros
+        herbicida["preco_unitario"] = 0.15
 
         atualiza_gastos(dados, 0.15, 450)
 
     print(
-        f"{VERDE}✓ Herbicida selecionado para Café: {insumo['nome']}{RESET}")
+        f"{VERDE}✓ Herbicida selecionado para Café: {herbicida['nome']}{RESET}")
 
 
 def pesticidas(indice_cultura):
     """Exibe menu de escolha de pesticida para a cultura no índice indicado"""
 
-    # Salva o dicionário da cultura numa variável local para referência simplificada
-    dados = culturas[indice_cultura]['dados']
-    nome_cultura = culturas[indice_cultura]['nome']
-    # Pesticida está na posição [1] do vetor
-    insumo_pesticida = dados['insumos'][1]
+    nome_cultura = culturas[indice_cultura]["nome"]
 
-    if insumo_pesticida['nome'] != '':  # Se o pesticida já foi escolhido
-
-        print(f"{VERDE}{NEGRITO}=== PESTICIDA {nome_cultura.upper()} ==={RESET}")
-        print(
-            f"Selecionado: {AMARELO}{insumo_pesticida['nome'].strip()}{RESET}")
-
-        input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
-
-        return  # Sai da função cedo
-
-    # Senão, exibe o menu de seleção
-
-    print(f"{VERDE}{NEGRITO}=== SELEÇÃO DE PESTICIDA - {nome_cultura.upper()} ==={RESET}\n")
+    print(
+        f"{VERDE}{NEGRITO}=== SELEÇÃO DE PESTICIDA - {nome_cultura.upper()} ==={RESET}\n"
+    )
 
     if nome_cultura == "Soja":
         escolher_pesticida_soja(indice_cultura)
@@ -385,78 +346,68 @@ def escolher_pesticida_soja(indice_cultura):
     """Exibe opções para a escolha de um pesticida para a cultura de Soja"""
 
     # Salva o dicionário da cultura numa variável local para referência simplificada
-    dados = culturas[indice_cultura]['dados']
-    insumo = dados['insumos'][1]  # Pesticida na posição [1]
+    dados = culturas[indice_cultura]["dados"]
+    pesticida = dados["insumos"][1]
 
     problema = ler_int(
-        "Tipo de praga:\n  [1] Insetos em vagens\n  [2] Insetos sugadores\nOpção: ", 1, 2)
+        "Tipo de praga:\n  [1] Insetos em vagens\n  [2] Insetos sugadores\nOpção: ",
+        1,
+        2,
+    )
 
     if problema == 1:  # Se o problema for insetos em vagens
-        insumo['nome'] = "Lambda-cialotrina"
-        insumo['qtd_por_ha'] = 40  # mililitros
-        insumo['preco_unitario'] = 0.23
+        pesticida["nome"] = "Lambda-cialotrina"
+        pesticida["qtd_por_ha"] = 40  # mililitros
+        pesticida["preco_unitario"] = 0.23
 
         atualiza_gastos(dados, 0.23, 40)
     else:  # Se o problema for insetos sugadores
-        insumo['nome'] = "Imidacloprido"
-        insumo['qtd_por_ha'] = 150  # mililitros
-        insumo['preco_unitario'] = 0.46
+        pesticida["nome"] = "Imidacloprido"
+        pesticida["qtd_por_ha"] = 150  # mililitros
+        pesticida["preco_unitario"] = 0.46
 
         atualiza_gastos(dados, 0.46, 150)
 
     print(
-        f"{VERDE}✓ Pesticida selecionado para Soja: {insumo['nome']}{RESET}")
+        f"{VERDE}✓ Pesticida selecionado para Soja: {pesticida['nome']}{RESET}")
 
 
 def escolher_pesticida_cafe(indice_cultura):
     """Exibe opções para a escolha de um pesticida para a cultura de Café"""
 
     # Salva o dicionário da cultura numa variável local para referência simplificada
-    dados = culturas[indice_cultura]['dados']
-    insumo = dados['insumos'][1]  # Pesticida na posição [1]
+    dados = culturas[indice_cultura]["dados"]
+    pesticida = dados["insumos"][1]
 
     problema = ler_int(
-        "Tipo de praga:\n  [1] Bicho-mineiro\n  [2] Ferrugem\nOpção: ", 1, 2)
+        "Tipo de praga:\n  [1] Bicho-mineiro\n  [2] Ferrugem\nOpção: ", 1, 2
+    )
 
     if problema == 1:  # Se o problema for Bicho-mineiro
-        insumo['nome'] = "Abamectina"
-        insumo['qtd_por_ha'] = 270  # mililitros
-        insumo['preco_unitario'] = 0.03
+        pesticida["nome"] = "Abamectina"
+        pesticida["qtd_por_ha"] = 270  # mililitros
+        pesticida["preco_unitario"] = 0.03
 
         atualiza_gastos(dados, 0.03, 270)
     else:  # Se o problema for ferrugem
-        insumo['nome'] = "Epoxiconazol"
-        insumo['qtd_por_ha'] = 750  # mililitros
-        insumo['preco_unitario'] = 0.25
+        pesticida["nome"] = "Epoxiconazol"
+        pesticida["qtd_por_ha"] = 750  # mililitros
+        pesticida["preco_unitario"] = 0.25
 
         atualiza_gastos(dados, 0.25, 750)
 
     print(
-        f"{VERDE}✓ Pesticida selecionado para Café: {insumo['nome']}{RESET}")
+        f"{VERDE}✓ Pesticida selecionado para Café: {pesticida['nome']}{RESET}")
 
 
 def fertilizantes(indice_cultura):
     """Exibe menu de escolha de fertilizante para a cultura no índice indicado"""
 
-    # Salva o dicionário da cultura numa variável local para referência simplificada
-    dados = culturas[indice_cultura]['dados']
-    nome_cultura = culturas[indice_cultura]['nome']
-    # Fertilizante está na posição [2] do vetor
-    insumo_fertilizante = dados['insumos'][2]
+    nome_cultura = culturas[indice_cultura]["nome"]
 
-    if insumo_fertilizante['nome'] != '':  # Se o fertilizante já foi escolhido
-
-        print(f"{VERDE}{NEGRITO}=== FERTILIZANTE {nome_cultura.upper()} ==={RESET}")
-        print(
-            f"Selecionado: {AMARELO}{insumo_fertilizante['nome'].strip()}{RESET}")
-
-        input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
-
-        return  # Sai da função cedo
-
-    # Senão, exibe o menu de seleção
-
-    print(f"{VERDE}{NEGRITO}=== SELEÇÃO DE FERTILIZANTE - {nome_cultura.upper()} ==={RESET}\n")
+    print(
+        f"{VERDE}{NEGRITO}=== SELEÇÃO DE FERTILIZANTE - {nome_cultura.upper()} ==={RESET}\n"
+    )
 
     if nome_cultura == "Soja":
         escolher_fertilizante_soja(indice_cultura)
@@ -470,93 +421,100 @@ def escolher_fertilizante_soja(indice_cultura):
     """Exibe opções para a escolha de um fertilizante para a cultura de Soja"""
 
     # Salva o dicionário da cultura numa variável local para referência simplificada
-    dados = culturas[indice_cultura]['dados']
-    insumo = dados['insumos'][2]  # Fertilizante na posição [2]
+    dados = culturas[indice_cultura]["dados"]
+    fertilizante = dados["insumos"][2]
 
     problema = ler_int(
-        "Característica do solo:\n  [1] pH < 6\n  [2] Fixação biológica baixa\nOpção: ", 1, 2)
+        "Característica do solo:\n  [1] pH < 6\n  [2] Fixação biológica baixa\nOpção: ",
+        1,
+        2,
+    )
 
     if problema == 1:  # Se o pH for baixo
-        insumo['nome'] = "Calcário"
-        insumo['qtd_por_ha'] = 3000  # kilogramas
-        insumo['preco_unitario'] = 0.104
+        fertilizante["nome"] = "Calcário"
+        fertilizante["qtd_por_ha"] = 3000  # kilogramas
+        fertilizante["preco_unitario"] = 0.104
 
         atualiza_gastos(dados, 0.104, 3000)
     else:  # Se a fixação biológica for baixa
-        insumo['nome'] = "Inoculantes Rhizobium"
-        insumo['qtd_por_ha'] = 0.2  # kilogramas
-        insumo['preco_unitario'] = 130
+        fertilizante["nome"] = "Inoculantes Rhizobium"
+        fertilizante["qtd_por_ha"] = 0.2  # kilogramas
+        fertilizante["preco_unitario"] = 130
 
         atualiza_gastos(dados, 130, 0.2)
 
     print(
-        f"{VERDE}✓ Fertilizante selecionado para Soja: {insumo['nome']}{RESET}")
+        f"{VERDE}✓ Fertilizante selecionado para Soja: {fertilizante['nome']}{RESET}")
 
 
 def escolher_fertilizante_cafe(indice_cultura):
     """Exibe opções para a escolha de um fertilizante para a cultura de Café"""
 
     # Salva o dicionário da cultura numa variável local para referência simplificada
-    dados = culturas[indice_cultura]['dados']
-    insumo = dados['insumos'][2]  # Fertilizante na posição [2]
+    dados = culturas[indice_cultura]["dados"]
+    fertilizante = dados["insumos"][2]
 
     problema = ler_int(
         "Necessidade do solo:\n  [1] NPK\n  [2] Magnésio\nOpção: ", 1, 2)
 
     if problema == 1:  # Se a necessidade for NPK
-        insumo['nome'] = "NPK"
-        insumo['qtd_por_ha'] = 600  # kg
-        insumo['preco_unitario'] = 8.0
+        fertilizante["nome"] = "NPK"
+        fertilizante["qtd_por_ha"] = 600  # kg
+        fertilizante["preco_unitario"] = 8.0
 
         atualiza_gastos(dados, 8.0, 600)
     else:  # Se a necessidade for Magnésio
-        insumo['nome'] = "Magnésio"
-        insumo['qtd_por_ha'] = 80  # kg
-        insumo['preco_unitario'] = 7.9
+        fertilizante["nome"] = "Magnésio"
+        fertilizante["qtd_por_ha"] = 80  # kg
+        fertilizante["preco_unitario"] = 7.9
 
         atualiza_gastos(dados, 7.9, 80)
 
     print(
-        f"{VERDE}✓ Fertilizante selecionado para Café: {insumo['nome']}{RESET}")
+        f"{VERDE}✓ Fertilizante selecionado para Café: {fertilizante['nome']}{RESET}")
 
 
 def perfil(indice_cultura):
     """Exibe as informações do perfil de cultivo do usuário"""
 
     # Salva o dicionário da cultura numa variável local para referência simplificada
-    dados = culturas[indice_cultura]['dados']
-    nome_cultura = culturas[indice_cultura]['nome']
+    dados = culturas[indice_cultura]["dados"]
+    nome_cultura = culturas[indice_cultura]["nome"]
 
     # Exibe uma sequência de 60 "=" na cor verde e em negrito
-    print(f"{VERDE}{NEGRITO}{'='*60}{RESET}")
-    print(f"{VERDE}{NEGRITO}{' '*18}PERFIL DE CULTIVO - {nome_cultura.upper()}{RESET}{VERDE}{NEGRITO}{RESET}")
-    print(f"{VERDE}{NEGRITO}{'='*60}{RESET}\n")
+    print(f"{VERDE}{NEGRITO}{'=' * 60}{RESET}")
+    print(
+        f"{VERDE}{NEGRITO}{' ' * 18}PERFIL DE CULTIVO - {nome_cultura.upper()}{RESET}{VERDE}{NEGRITO}{RESET}"
+    )
+    print(f"{VERDE}{NEGRITO}{'=' * 60}{RESET}\n")
 
     print(f"{AMARELO}Agricultor:{RESET} {nome}")
-    print(
-        f"{AMARELO}Cultura:{RESET} {nome_cultura}")
+    print(f"{AMARELO}Cultura:{RESET} {nome_cultura}")
 
     print(f"\n{NEGRITO}----- DADOS FINANCEIROS -----{RESET}")
     print(f"  Área cultivável:...{dados['area']:.2f} ha")
-    print(f"  Peso total:........{dados['peso']/1000:.2f} ton")
+    print(f"  Peso total:........{dados['peso'] / 1000:.2f} ton")
     print(f"  Receita estimada:..R$ {dados['lucro']:.2f}")
 
     print(f"\n{NEGRITO}----- MANEJO DE INSUMOS -----{RESET}")
     print(f"  Herbicida:.........{dados['insumos'][0]['nome'].strip()}")
     print(
-        f"  Quantidade:........{dados['insumos'][0]['qtd_por_ha']*dados['area']:.1f} g/ha")
+        f"  Quantidade:........{dados['insumos'][0]['qtd_por_ha'] * dados['area']:.1f} g/ha"
+    )
     print(f"  Pesticida:.........{dados['insumos'][1]['nome'].strip()}")
     print(
-        f"  Quantidade:........{dados['insumos'][1]['qtd_por_ha']*dados['area']:.1f} ml/ha")
+        f"  Quantidade:........{dados['insumos'][1]['qtd_por_ha'] * dados['area']:.1f} ml/ha"
+    )
     print(f"  Fertilizante:......{dados['insumos'][2]['nome'].strip()}")
     print(
-        f"  Quantidade:........{dados['insumos'][2]['qtd_por_ha']*dados['area']:.1f} kg/ha")
+        f"  Quantidade:........{dados['insumos'][2]['qtd_por_ha'] * dados['area']:.1f} kg/ha"
+    )
 
     print(
         f"\n{VERMELHO}{NEGRITO}  GASTOS TOTAIS:   R$ {dados['gastos']:.2f}{RESET}")
 
     # Exibe uma sequência de 60 "=" na cor verde e em negrito
-    print(f"\n{VERDE}{NEGRITO}{'='*60}{RESET}")
+    print(f"\n{VERDE}{NEGRITO}{'=' * 60}{RESET}")
 
     input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
 
@@ -568,7 +526,10 @@ def calcular_area():
 
     while True:
         forma = ler_int(
-            "Escolha a forma da área:\n  [1] Retângulo\n  [2] Triângulo\n  [3] Círculo\nOpção: ", 1, 3)
+            "Escolha a forma da área:\n  [1] Retângulo\n  [2] Triângulo\n  [3] Círculo\nOpção: ",
+            1,
+            3,
+        )
         limpar_tela()
 
         if forma == 1:  # Se for retângulo
@@ -587,7 +548,7 @@ def calcular_area():
             return area
         else:  # Se for círculo
             raio = ler_float("Raio (hectares): ", 0.01)
-            area = math.pi * raio ** 2
+            area = math.pi * raio**2
 
             print(f"{VERDE}✓ Área circular: {area:.2f} ha{RESET}")
             return area
@@ -598,10 +559,12 @@ def atualizar_dados(indice_cultura):
 
     limpar_tela()
 
-    dados = culturas[indice_cultura]['dados']
-    nome_cultura = culturas[indice_cultura]['nome']
+    dados = culturas[indice_cultura]["dados"]
+    nome_cultura = culturas[indice_cultura]["nome"]
 
-    print(f"{VERDE}{NEGRITO}=== ATUALIZAÇÃO DE DADOS - {nome_cultura.upper()} ==={RESET}\n")
+    print(
+        f"{VERDE}{NEGRITO}=== ATUALIZAÇÃO DE DADOS - {nome_cultura.upper()} ==={RESET}\n"
+    )
 
     opcao = ler_int(
         "Qual dado deseja atualizar?\n"
@@ -609,7 +572,9 @@ def atualizar_dados(indice_cultura):
         "  [2] Herbicida\n"
         "  [3] Pesticida\n"
         "  [4] Fertilizante\n"
-        "Opção: ", 1, 4
+        "Opção: ",
+        1,
+        4,
     )
 
     limpar_tela()
@@ -617,34 +582,18 @@ def atualizar_dados(indice_cultura):
     if opcao == 1:  # Atualizar área
         financeiro(indice_cultura)
     elif opcao == 2:  # Atualizar herbicida
-        dados['gastos'] -= (
-            dados['insumos'][0]['preco_unitario'] *
-            dados['insumos'][0]['qtd_por_ha'] *
-            dados['area']
-        )
-        dados['insumos'][0]['nome'] = ""
-        dados['insumos'][0]['qtd_por_ha'] = 0
-        dados['insumos'][0]['preco_unitario'] = 0
+        dados["gastos"] -= dados["insumos"][0]["preco_unitario"] * \
+            dados["insumos"][0]["qtd_por_ha"] * dados["area"]
+
         herbicidas(indice_cultura)
     elif opcao == 3:  # Atualizar pesticida
-        dados['gastos'] -= (
-            dados['insumos'][1]['preco_unitario'] *
-            dados['insumos'][1]['qtd_por_ha'] *
-            dados['area']
-        )
-        dados['insumos'][1]['nome'] = ""
-        dados['insumos'][1]['qtd_por_ha'] = 0
-        dados['insumos'][1]['preco_unitario'] = 0
+        dados["gastos"] -= dados["insumos"][1]["preco_unitario"] * \
+            dados["insumos"][1]["qtd_por_ha"] * dados["area"]
         pesticidas(indice_cultura)
     else:  # Atualizar fertilizante
-        dados['gastos'] -= (
-            dados['insumos'][2]['preco_unitario'] *
-            dados['insumos'][2]['qtd_por_ha'] *
-            dados['area']
-        )
-        dados['insumos'][2]['nome'] = ""
-        dados['insumos'][2]['qtd_por_ha'] = 0
-        dados['insumos'][2]['preco_unitario'] = 0
+        dados["gastos"] -= dados["insumos"][2]["preco_unitario"] * \
+            dados["insumos"][2]["qtd_por_ha"] * dados["area"]
+
         fertilizantes(indice_cultura)
 
     print(f"\n{VERDE}✓ Dados atualizados com sucesso!{RESET}")
@@ -656,8 +605,13 @@ def deletar_dados(indice_cultura):
 
     limpar_tela()
 
-    dados = culturas[indice_cultura]['dados']
-    nome_cultura = culturas[indice_cultura]['nome']
+    if esta_vazia(indice_cultura):
+        print(f"{VERMELHO}✗ Sem dados disponíveis nesta cultura.{RESET}")
+        input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
+        return
+
+    dados = culturas[indice_cultura]["dados"]
+    nome_cultura = culturas[indice_cultura]["nome"]
 
     print(f"{VERDE}{NEGRITO}=== DELEÇÃO DE DADOS - {nome_cultura.upper()} ==={RESET}\n")
 
@@ -665,7 +619,9 @@ def deletar_dados(indice_cultura):
         "O que deseja deletar?\n"
         "  [1] Apenas um insumo\n"
         "  [2] Todos os dados da cultura\n"
-        "Opção: ", 1, 2
+        "Opção: ",
+        1,
+        2,
     )
 
     limpar_tela()
@@ -676,43 +632,51 @@ def deletar_dados(indice_cultura):
             "  [0] Herbicida\n"
             "  [1] Pesticida\n"
             "  [2] Fertilizante\n"
-            "Opção: ", 0, 2
+            "Opção: ",
+            0,
+            2,
         )
 
         limpar_tela()
 
-        insumo = dados['insumos'][insumo_idx]
+        insumo = dados["insumos"][insumo_idx]
 
-        if insumo['nome'] != "":
-            dados['gastos'] -= (
-                insumo['preco_unitario'] * insumo['qtd_por_ha'] * dados['area']
+        if insumo["nome"] != "":
+            dados["gastos"] -= (
+                insumo["preco_unitario"] * insumo["qtd_por_ha"] * dados["area"]
             )
 
             # Resetar elemento do vetor na posição indicada
-            dados['insumos'][insumo_idx] = {
-                "tipo": insumo['tipo'],
+            dados["insumos"][insumo_idx] = {
+                "tipo": insumo["tipo"],
                 "nome": "",
                 "qtd_por_ha": 0,
-                "preco_unitario": 0
+                "preco_unitario": 0,
             }
 
             print(
-                f"{VERDE}✓ {insumo['tipo'].capitalize()} na posição [{insumo_idx}] deletado com sucesso!{RESET}")
+                f"{VERDE}✓ {insumo['tipo'].capitalize()} deletado com sucesso!{RESET}"
+            )
         else:
             print(
-                f"{AMARELO}⚠ Nenhum {insumo['tipo']} definido nesta posição.{RESET}")
+                f"{AMARELO}⚠ Nenhum {insumo['tipo']} definido.{RESET}")
 
     else:  # Deletar todos os dados da cultura
-        confirmacao = input(
-            f"{VERMELHO}Tem certeza que deseja deletar TODOS os dados de {nome_cultura}? (s/n): {RESET}").strip().upper()
+        confirmacao = (
+            input(
+                f"{VERMELHO}Tem certeza que deseja deletar TODOS os dados de {nome_cultura}? (s/n): {RESET}"
+            )
+            .strip()
+            .upper()
+        )
 
         if confirmacao in ["SIM", "S"]:
             culturas[indice_cultura] = {
                 "nome": nome_cultura,
                 "dados": cria_cultura(
-                    culturas[indice_cultura]['dados']['PESO_POR_HA'],
-                    culturas[indice_cultura]['dados']['PRECO_POR_HA']
-                )
+                    culturas[indice_cultura]["dados"]["PESO_POR_HA"],
+                    culturas[indice_cultura]["dados"]["PRECO_POR_HA"],
+                ),
             }
             print(
                 f"{VERDE}✓ Todos os dados de {nome_cultura} foram deletados!{RESET}")
@@ -727,24 +691,25 @@ def exibir_dados(indice_cultura):
 
     limpar_tela()
 
-    dados = culturas[indice_cultura]['dados']
-    nome_cultura = culturas[indice_cultura]['nome']
+    dados = culturas[indice_cultura]["dados"]
+    nome_cultura = culturas[indice_cultura]["nome"]
 
     print(f"{VERDE}{NEGRITO}=== SAÍDA DE DADOS - {nome_cultura.upper()} ==={RESET}\n")
 
     if not esta_preenchida(indice_cultura):
         print(
-            f"{AMARELO}⚠ Alguns dados da cultura ainda não foram preenchidos.{RESET}\n")
+            f"{AMARELO}⚠ Alguns dados da cultura ainda não foram preenchidos.{RESET}\n"
+        )
 
     print(f"{NEGRITO}Dados financeiros:{RESET}")
     print(f"  Área: {dados['area']:.2f} ha")
-    print(f"  Peso estimado: {dados['peso']/1000:.2f} ton")
+    print(f"  Peso estimado: {dados['peso'] / 1000:.2f} ton")
     print(f"  Lucro: R$ {dados['lucro']:.2f}")
     print(f"  Gastos com insumos: R$ {dados['gastos']:.2f}\n")
 
     print(f"{NEGRITO}Insumos utilizados:{RESET}")
     for insumo in dados["insumos"]:
-        nome = insumo['nome'].strip() if insumo['nome'] else "(não definido)"
+        nome = insumo["nome"].strip() if insumo["nome"] else "(não definido)"
         print(f"  {insumo['tipo'].title()}: {nome}")
 
     input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
@@ -776,18 +741,40 @@ def saida_dados():
             "  [1] Exibir uma cultura específica\n"
             "  [2] Listar todas as culturas\n"
             "  [0] Voltar ao menu principal\n"
-            "Opção: ", 0, 2
+            "Opção: ",
+            0,
+            2,
         )
 
         if opcao == 0:
             break
         elif opcao == 1:
             indice = selecionar_cultura()
-            exibir_dados(indice)
-        else:
-            listar_culturas()
-            for indice in range(len(culturas)):
+
+            if indice < 0:  # Se o usuário escolheu "Voltar"
+                continue
+
+            if esta_vazia(indice):  # Se a cultura escolhida estiver vazia
+                limpar_tela()
+                print(f"{VERMELHO}✗ Cultura não cadastrada!{RESET}")
+                input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
+            else:
                 exibir_dados(indice)
+        else:
+            limpar_tela()
+            print(f"{VERDE}{NEGRITO}=== CULTURAS CADASTRADAS ==={RESET}\n")
+            cultura_exibida = False
+            for indice, cultura in enumerate(culturas):
+                if not esta_vazia(indice):
+                    print(f"  [{indice}] {cultura['nome']}")
+                    cultura_exibida = True
+            if not cultura_exibida:
+                print(f"{AMARELO}Nenhuma cultura cadastrada.{RESET}")
+            input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
+
+            for indice in range(len(culturas)):
+                if not esta_vazia(indice):
+                    exibir_dados(indice)
 
 
 def atualizacao_dados():
@@ -796,10 +783,15 @@ def atualizacao_dados():
     while True:
         indice = selecionar_cultura()
 
-        if indice >= 0 and indice < len(culturas):
-            atualizar_dados(indice)
-        else:
+        if indice < 0:  # Se o usuário escolheu "Voltar"
             break
+
+        if esta_vazia(indice):
+            limpar_tela()
+            print(f"{VERMELHO}✗ Nenhum dado disponível para atualização{RESET}")
+            input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
+        else:
+            atualizar_dados(indice)
 
 
 def delecao_dados():
@@ -820,13 +812,15 @@ def menu(indice_cultura):
     while True:
         limpar_tela()
 
-        nome_cultura = culturas[indice_cultura]['nome']
+        nome_cultura = culturas[indice_cultura]["nome"]
 
         print(f"{VERDE}{NEGRITO}=== MENU PRINCIPAL - {nome_cultura.upper()} ==={RESET}")
 
         completo = esta_preenchida(indice_cultura)
 
-        status = f"{VERDE}✓ Completo{RESET}" if completo else f"{AMARELO}○ Incompleto{RESET}"
+        status = (
+            f"{VERDE}✓ Completo{RESET}" if completo else f"{AMARELO}○ Incompleto{RESET}"
+        )
         opcao_extra = "  [0] Voltar\n" if completo else ""
 
         print(f"Status: {status}\n")
@@ -837,9 +831,7 @@ def menu(indice_cultura):
             "  [2] Herbicida\n"
             "  [3] Pesticida\n"
             "  [4] Fertilizante\n"
-            "  [5] Perfil\n"
-            + opcao_extra +
-            "Opção: "
+            "  [5] Perfil\n" + opcao_extra + "Opção: "
         )
 
         if opcao == 1:
@@ -878,12 +870,13 @@ def aplicacao():
         "Escolha o meio de aplicação:\n"
         "  [1] Pulverizador tratorizado (R$ 225.000)\n"
         "  [2] Drone agrícola (R$ 15.000)\n"
-        "Opção: ", 1, 2
+        "Opção: ",
+        1,
+        2,
     )
     limpar_tela()
 
     if meio == 1:  # Se o meio for Pulverizador tratorizado
-
         print(f"{AMARELO}Calculando redução da área para trator...{RESET}\n")
 
         area_trator = area_total * 0.12
@@ -917,18 +910,19 @@ def resumo_final():
 
     limpar_tela()
 
-    print(f"{VERDE}{NEGRITO}{'='*60}{RESET}")
-    print(f"{VERDE}{NEGRITO}{' '*18}RESUMO FINAL DO PROJETO{RESET}{VERDE}{NEGRITO}{RESET}")
-    print(f"{VERDE}{NEGRITO}{'='*60}{RESET}\n")
+    print(f"{VERDE}{NEGRITO}{'=' * 60}{RESET}")
+    print(
+        f"{VERDE}{NEGRITO}{' ' * 18}RESUMO FINAL DO PROJETO{RESET}{VERDE}{NEGRITO}{RESET}"
+    )
+    print(f"{VERDE}{NEGRITO}{'=' * 60}{RESET}\n")
 
     print(f"{AMARELO}Agricultor:{RESET} {nome}\n")
 
     for indice, cultura in enumerate(culturas):
-        dados = cultura['dados']
-        print(
-            f"{NEGRITO}--- {cultura['nome'].upper()} ---{RESET}")
+        dados = cultura["dados"]
+        print(f"{NEGRITO}--- {cultura['nome'].upper()} ---{RESET}")
         print(f"  Área:           {dados['area']:.2f} ha")
-        print(f"  Produção:       {dados['peso']/1000:.2f} ton")
+        print(f"  Produção:       {dados['peso'] / 1000:.2f} ton")
         print(f"  Receita:        R$ {dados['lucro']:.2f}")
         print(f"  Gastos insumos: R$ {dados['gastos']:.2f}\n")
 
@@ -937,7 +931,7 @@ def resumo_final():
     print(f"  Gastos totais:  R$ {gasto_total:.2f}")
     print(f"  Aplicação:      {meio_de_aplicacao}")
 
-    print(f"\n{VERDE}{NEGRITO}{'='*70}{RESET}")
+    print(f"\n{VERDE}{NEGRITO}{'=' * 70}{RESET}")
     input(f"\n{AZUL}[Pressione ENTER para finalizar]{RESET}")
 
 
@@ -962,7 +956,9 @@ def menu_principal():
             "  [4] Deleção de dados\n"
             "  [5] Gerar resumo final\n"
             "  [0] Sair do programa\n"
-            "Opção: ", 0, 5
+            "Opção: ",
+            0,
+            5,
         )
 
         if opcao == 1:
@@ -977,10 +973,13 @@ def menu_principal():
             area_total = calculo_area_total()
             gasto_total = calculo_gasto_total()
 
-            if area_total == 0:
+            culturas_preenchidas = [i for i in range(
+                len(culturas)) if esta_preenchida(i)]
+
+            if len(culturas_preenchidas) != len(culturas):
                 limpar_tela()
                 print(
-                    f"{VERMELHO}✗ Erro: Nenhuma cultura foi cadastrada ainda.{RESET}")
+                    f"{VERMELHO}✗ Erro: Todas as culturas precisam estar {NEGRITO}completamente{RESET}{VERMELHO} preenchidas.{RESET}")
                 input(f"\n{AZUL}[Pressione ENTER para continuar]{RESET}")
             else:
                 aplicacao()
@@ -992,11 +991,12 @@ def menu_principal():
 
 
 if __name__ == "__main__":
-
     nome = ""
     while nome.strip() == "":
         limpar_tela()
-        nome = input(
-            f"{VERDE}{NEGRITO}=== BEM-VINDO À FARMTECH SOLUTIONS ==={RESET}\n{AZUL}Digite seu nome:{RESET} ").strip().title()
+
+        print(f"{VERDE}{NEGRITO}=== BEM-VINDO À FARMTECH SOLUTIONS ==={RESET}\n")
+
+        nome = input(f"Digite seu nome: ").strip().title()
 
     menu_principal()
