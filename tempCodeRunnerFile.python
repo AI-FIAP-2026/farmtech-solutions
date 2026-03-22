@@ -1,9 +1,0 @@
-cultura = {
-    "Soja": {"area": 0, "herbicida": "", "pesticida": "",
-              "fertilizante": "", "gastos": 0},
-    "Cafe": {"area": 0, "herbicida": "", "pesticida": "", 
-            "fertilizante": "", "gastos": 0}    
-}
-
-for i in cultura:
-    print(i, cultura[i])
