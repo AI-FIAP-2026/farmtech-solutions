@@ -55,11 +55,23 @@ class Financeiro:
 
 
 @dataclass
-class FarmData:
+class Cultura:
     cultura: Optional[str] = None
     area: float = 0.0
     insumos: Insumos = field(default_factory=Insumos)
     financeiro: Financeiro = field(default_factory=Financeiro)
+
+
+@dataclass
+class FarmData:
+    culturas: list[Cultura] = field(default_factory=list)
+    cultura_ativa_idx: Optional[int] = None
+
+    @property
+    def cultura_ativa(self) -> Optional[Cultura]:
+        if self.cultura_ativa_idx is not None and 0 <= self.cultura_ativa_idx < len(self.culturas):
+            return self.culturas[self.cultura_ativa_idx]
+        return None
 
 
 def validar_float(mensagem: str, minimo: float = 0.0) -> float:
@@ -88,122 +100,185 @@ def validar_int(mensagem: str, opcoes: Optional[list] = None) -> int:
 
 def escolher_cultura(state: FarmData) -> None:
     """Define a cultura escolhida no estado."""
+    if state.culturas:
+        print(f"{AZUL}Culturas existentes:{RESET}")
+        for i, c in enumerate(state.culturas):
+            print(f"{i+1} - {c.cultura or 'Não definida'} (Área: {c.area:.2f} m²)")
+        opcao = validar_int(f"{AZUL}Escolher cultura existente [1-{len(state.culturas)}] ou 0 para nova: {RESET}", list(range(0, len(state.culturas)+1)))
+        if opcao == 0:
+            # Nova cultura
+            pass  # Continua para escolher tipo
+        else:
+            state.cultura_ativa_idx = opcao - 1
+            print(f"{VERDE}Cultura ativa: {state.cultura_ativa.cultura}{RESET}")
+            return
+
+    # Escolher tipo de cultura
     opcao = input(f"{AZUL}Escolha a cultura [C]afé / [S]oja: {RESET}").strip().upper()
     if opcao == "C":
-        state.cultura = "cafe"
-        print(f"{VERDE}Cultura definida: café{RESET}")
+        cultura_nome = "cafe"
     elif opcao == "S":
-        state.cultura = "soja"
-        print(f"{VERDE}Cultura definida: soja{RESET}")
+        cultura_nome = "soja"
     else:
         print(f"{VERMELHO}Opção inválida. Use C ou S.{RESET}")
+        return
+
+    # Criar nova cultura
+    nova_cultura = Cultura(cultura=cultura_nome)
+    state.culturas.append(nova_cultura)
+    state.cultura_ativa_idx = len(state.culturas) - 1
+    print(f"{VERDE}Nova cultura criada: {cultura_nome}{RESET}")
 
 
 def calcular_area(state: FarmData) -> None:
     """Calcula a área plantada com base na cultura."""
-    if state.cultura == "cafe":
+    if not state.cultura_ativa:
+        print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
+        return
+
+    cultura = state.cultura_ativa
+    if cultura.cultura == "cafe":
         comprimento = validar_float("Comprimento (m): ", 0.01)
         largura = validar_float("Largura (m): ", 0.01)
-        state.area = comprimento * largura
-        print(f"{VERDE}Área do café (retângulo): {state.area:.2f} m²{RESET}")
-    elif state.cultura == "soja":
+        cultura.area = comprimento * largura
+        print(f"{VERDE}Área do café (retângulo): {cultura.area:.2f} m²{RESET}")
+    elif cultura.cultura == "soja":
         raio = validar_float("Raio (m): ", 0.01)
-        state.area = math.pi * (raio ** 2)
-        print(f"{VERDE}Área da soja (círculo): {state.area:.2f} m²{RESET}")
+        cultura.area = math.pi * (raio ** 2)
+        print(f"{VERDE}Área da soja (círculo): {cultura.area:.2f} m²{RESET}")
     else:
         print(f"{VERMELHO}Defina uma cultura antes de calcular área.{RESET}")
 
 
 def calcular_insumos(state: FarmData) -> None:
     """Calcula insumos a partir da área e cultura."""
-    if state.area <= 0 or not state.cultura:
-        print(f"{VERMELHO}Área ou cultura não definida. Não é possível calcular insumos.{RESET}")
+    if not state.cultura_ativa:
+        print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
         return
 
-    if state.cultura == "cafe":
-        state.insumos.adubo = 200 * state.area
-        state.insumos.agua = 3.0 * state.area
-        state.insumos.fosfato = 10 * state.area
+    cultura = state.cultura_ativa
+    if cultura.area <= 0:
+        print(f"{VERMELHO}Área não definida. Não é possível calcular insumos.{RESET}")
+        return
+
+    if cultura.cultura == "cafe":
+        cultura.insumos.adubo = 200 * cultura.area
+        cultura.insumos.agua = 3.0 * cultura.area
+        cultura.insumos.fosfato = 10 * cultura.area
     else:
-        state.insumos.adubo = 150 * state.area
-        state.insumos.agua = 2.5 * state.area
-        state.insumos.fosfato = 5 * state.area
+        cultura.insumos.adubo = 150 * cultura.area
+        cultura.insumos.agua = 2.5 * cultura.area
+        cultura.insumos.fosfato = 5 * cultura.area
 
     print(f"{VERDE}Insumos calculados com sucesso.{RESET}")
 
 
 def definir_herbicida(state: FarmData) -> None:
     """Seleciona herbicida conforme tipo de ervas daninhas."""
+    if not state.cultura_ativa:
+        print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
+        return
     tipo = validar_int("[1] Grama rasteira, [2] Grama de folha larga: ", [1, 2])
-    state.insumos.herbicida = "Glifosato" if tipo == 1 else "2,4-D"
-    print(f"Herbicida: {state.insumos.herbicida}")
+    state.cultura_ativa.insumos.herbicida = "Glifosato" if tipo == 1 else "2,4-D"
+    print(f"Herbicida: {state.cultura_ativa.insumos.herbicida}")
 
 
 def definir_pesticida(state: FarmData) -> None:
     """Seleciona pesticida conforme tipo de inseto."""
+    if not state.cultura_ativa:
+        print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
+        return
     tipo = validar_int("[1] Insetos vagens, [2] Insetos sugadores: ", [1, 2])
-    state.insumos.pesticida = "Carbaryl" if tipo == 1 else "Imidacloprido"
-    print(f"Pesticida: {state.insumos.pesticida}")
+    state.cultura_ativa.insumos.pesticida = "Carbaryl" if tipo == 1 else "Imidacloprido"
+    print(f"Pesticida: {state.cultura_ativa.insumos.pesticida}")
 
 
 def definir_fertilizante(state: FarmData) -> None:
     """Seleciona fertilizante conforme condição do solo."""
+    if not state.cultura_ativa:
+        print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
+        return
     tipo = validar_int("[1] pH < 6, [2] baixa fixação biológica: ", [1, 2])
-    state.insumos.fertilizante = "Calcário" if tipo == 1 else "Inoculante Rhizobium"
-    print(f"Fertilizante: {state.insumos.fertilizante}")
+    state.cultura_ativa.insumos.fertilizante = "Calcário" if tipo == 1 else "Inoculante Rhizobium"
+    print(f"Fertilizante: {state.cultura_ativa.insumos.fertilizante}")
 
 
 def definir_meio_aplicacao(state: FarmData) -> None:
     """Seleciona método de aplicação e atualiza gastos."""
+    if not state.cultura_ativa:
+        print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
+        return
     tipo = validar_int("[1] Pulverizador tratorizado, [2] Drone: ", [1, 2])
     if tipo == 1:
-        state.financeiro.metodo_aplicacao = "Pulverizador Tratorizado"
-        state.financeiro.gastos += 225000
+        state.cultura_ativa.financeiro.metodo_aplicacao = "Pulverizador Tratorizado"
+        state.cultura_ativa.financeiro.gastos += 225000
     else:
-        state.financeiro.metodo_aplicacao = "Drone Agrícola"
-        state.financeiro.gastos += 15000
-    print(f"Método de aplicação: {state.financeiro.metodo_aplicacao}")
+        state.cultura_ativa.financeiro.metodo_aplicacao = "Drone Agrícola"
+        state.cultura_ativa.financeiro.gastos += 15000
+    print(f"Método de aplicação: {state.cultura_ativa.financeiro.metodo_aplicacao}")
 
 
 def calcular_financeiro(state: FarmData) -> None:
     """Calcula produção e lucro estimado."""
-    if state.area <= 0:
+    if not state.cultura_ativa:
+        print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
+        return
+
+    cultura = state.cultura_ativa
+    if cultura.area <= 0:
         print("Área inválida para cálculo financeiro.")
         return
 
-    hectares = state.area / 10000.0
-    state.financeiro.area_total = state.area
-    state.financeiro.peso_total = 3.2 * hectares
-    state.financeiro.lucro = 6300 * hectares
+    hectares = cultura.area / 10000.0
+    cultura.financeiro.area_total = cultura.area
+    cultura.financeiro.peso_total = 3.2 * hectares
+    cultura.financeiro.lucro = 6300 * hectares
 
-    print(f"Peso estimado: {state.financeiro.peso_total:.2f} ton")
-    print(f"Lucro estimado: R$ {state.financeiro.lucro:.2f}")
+    print(f"Peso estimado: {cultura.financeiro.peso_total:.2f} ton")
+    print(f"Lucro estimado: R$ {cultura.financeiro.lucro:.2f}")
 
 
 def exibir_dados(state: FarmData) -> None:
     """Exibe o estado atual configurado."""
+    if not state.cultura_ativa:
+        print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
+        return
+
+    cultura = state.cultura_ativa
     print(f"\n{VERDE}{NEGRITO}=== Perfil de Plantio ==={RESET}")
-    print(f"{AZUL}Cultura: {state.cultura or 'N/A'}{RESET}")
-    print(f"{AZUL}Área: {state.area:.2f} m²{RESET}")
+    print(f"{AZUL}Cultura: {cultura.cultura or 'N/A'}{RESET}")
+    print(f"{AZUL}Área: {cultura.area:.2f} m²{RESET}")
     print(f"{VERDE}--- Insumos ---{RESET}")
-    print(f"{AZUL}Adubo: {state.insumos.adubo:.2f} g{RESET}")
-    print(f"{AZUL}Água: {state.insumos.agua:.2f} L{RESET}")
-    print(f"{AZUL}Fosfato: {state.insumos.fosfato:.2f} g{RESET}")
-    print(f"{AZUL}Herbicida: {state.insumos.herbicida}{RESET}")
-    print(f"{AZUL}Pesticida: {state.insumos.pesticida}{RESET}")
-    print(f"{AZUL}Fertilizante: {state.insumos.fertilizante}{RESET}")
+    print(f"{AZUL}Adubo: {cultura.insumos.adubo:.2f} g{RESET}")
+    print(f"{AZUL}Água: {cultura.insumos.agua:.2f} L{RESET}")
+    print(f"{AZUL}Fosfato: {cultura.insumos.fosfato:.2f} g{RESET}")
+    print(f"{AZUL}Herbicida: {cultura.insumos.herbicida}{RESET}")
+    print(f"{AZUL}Pesticida: {cultura.insumos.pesticida}{RESET}")
+    print(f"{AZUL}Fertilizante: {cultura.insumos.fertilizante}{RESET}")
     print(f"{VERDE}--- Financeiro ---{RESET}")
-    print(f"{AZUL}Área total: {state.financeiro.area_total:.2f}{RESET}")
-    print(f"{AZUL}Peso total (ton): {state.financeiro.peso_total:.2f}{RESET}")
-    print(f"{AZUL}Lucro: R$ {state.financeiro.lucro:.2f}{RESET}")
-    print(f"{AZUL}Gastos: R$ {state.financeiro.gastos:.2f}{RESET}")
-    print(f"{AZUL}Meio aplicação: {state.financeiro.metodo_aplicacao}{RESET}")
+    print(f"{AZUL}Área total: {cultura.financeiro.area_total:.2f}{RESET}")
+    print(f"{AZUL}Peso total (ton): {cultura.financeiro.peso_total:.2f}{RESET}")
+    print(f"{AZUL}Lucro: R$ {cultura.financeiro.lucro:.2f}{RESET}")
+    print(f"{AZUL}Gastos: R$ {cultura.financeiro.gastos:.2f}{RESET}")
+    print(f"{AZUL}Meio aplicação: {cultura.financeiro.metodo_aplicacao}{RESET}")
 
 
 def atualizar_dados(state: FarmData) -> None:
     """Atualiza os dados de cultura, área e insumos do plantio."""
+    if not state.culturas:
+        print(f"{VERMELHO}Nenhuma cultura cadastrada.{RESET}")
+        return
+
     print("\n=== Atualização de Dados ===")
-    print("1 - Alterar cultura")
+    print("Culturas disponíveis:")
+    for i, c in enumerate(state.culturas):
+        print(f"{i+1} - {c.cultura or 'Não definida'} (Área: {c.area:.2f} m²)")
+
+    idx = validar_int("Escolha a cultura para atualizar: ", list(range(1, len(state.culturas)+1))) - 1
+    state.cultura_ativa_idx = idx
+    cultura = state.culturas[idx]
+
+    print("\n1 - Alterar cultura")
     print("2 - Alterar área")
     print("3 - Alterar insumos")
     print("0 - Voltar")
@@ -211,61 +286,90 @@ def atualizar_dados(state: FarmData) -> None:
     opcao = validar_int("Escolha opção de atualização: ", [0, 1, 2, 3])
 
     if opcao == 1:
-        escolher_cultura(state)
-        if state.area > 0:
-            calcular_insumos(state)
+        escolher_cultura(state)  # Isso vai sobrescrever a cultura ativa
     elif opcao == 2:
-        if not state.cultura:
-            print(f"{VERMELHO}Defina a cultura antes de alterar a área.{RESET}")
-        else:
-            calcular_area(state)
-            calcular_insumos(state)
+        calcular_area(state)
+        calcular_insumos(state)
     elif opcao == 3:
-        if not state.cultura:
-            print(f"{VERMELHO}Defina a cultura antes de editar insumos.{RESET}")
-        else:
-            definir_herbicida(state)
-            definir_pesticida(state)
-            definir_fertilizante(state)
-            definir_meio_aplicacao(state)
+        definir_herbicida(state)
+        definir_pesticida(state)
+        definir_fertilizante(state)
+        definir_meio_aplicacao(state)
     else:
         print(f"{AZUL}Retornando ao menu principal.{RESET}")
 
 
 def consultar_dados(state: FarmData) -> None:
-    """Exibe cultura atual e insumos definidos."""
+    """Exibe todas as culturas cadastradas."""
+    if not state.culturas:
+        print(f"{VERMELHO}Nenhuma cultura cadastrada.{RESET}")
+        return
+
     print(f"\n{VERDE}{NEGRITO}=== Consulta de Dados ==={RESET}")
-    print(f"{AZUL}Cultura atual: {state.cultura or 'Não definida'}{RESET}")
-    print(f"{AZUL}Área atual: {state.area:.2f} m²{RESET}")
-    print(f"{VERDE}--- Insumos ---{RESET}")
-    print(f"{AZUL}Herbicida: {state.insumos.herbicida}{RESET}")
-    print(f"{AZUL}Pesticida: {state.insumos.pesticida}{RESET}")
-    print(f"{AZUL}Fertilizante: {state.insumos.fertilizante}{RESET}")
-    print(f"{AZUL}Adubo (g): {state.insumos.adubo:.2f}{RESET}")
-    print(f"{AZUL}Água (L): {state.insumos.agua:.2f}{RESET}")
-    print(f"{AZUL}Fosfato (g): {state.insumos.fosfato:.2f}{RESET}")
+    for i, cultura in enumerate(state.culturas):
+        print(f"\n{AMARELO}--- Cultura {i+1} ---{RESET}")
+        print(f"{AZUL}Cultura: {cultura.cultura or 'Não definida'}{RESET}")
+        print(f"{AZUL}Área: {cultura.area:.2f} m²{RESET}")
+        print(f"{VERDE}--- Insumos ---{RESET}")
+        print(f"{AZUL}Herbicida: {cultura.insumos.herbicida}{RESET}")
+        print(f"{AZUL}Pesticida: {cultura.insumos.pesticida}{RESET}")
+        print(f"{AZUL}Fertilizante: {cultura.insumos.fertilizante}{RESET}")
+        print(f"{AZUL}Adubo (g): {cultura.insumos.adubo:.2f}{RESET}")
+        print(f"{AZUL}Água (L): {cultura.insumos.agua:.2f}{RESET}")
+        print(f"{AZUL}Fosfato (g): {cultura.insumos.fosfato:.2f}{RESET}")
 
 
 def zerar_dados(state: FarmData) -> None:
-    """Zera todos os dados da aplicação."""
-    state.cultura = None
-    state.area = 0.0
-    state.insumos = Insumos()
-    state.financeiro = Financeiro()
-    print(f"{VERDE}Dados zerados com sucesso.{RESET}")
+    """Permite deletar culturas específicas ou todas."""
+    if not state.culturas:
+        print(f"{VERMELHO}Nenhuma cultura cadastrada.{RESET}")
+        return
+
+    print("\n=== Deletar Dados ===")
+    print("Culturas disponíveis:")
+    for i, c in enumerate(state.culturas):
+        print(f"{i+1} - {c.cultura or 'Não definida'} (Área: {c.area:.2f} m²)")
+
+    print(f"{len(state.culturas)+1} - Deletar todas as culturas")
+    print("0 - Voltar")
+
+    opcao = validar_int("Escolha opção: ", list(range(0, len(state.culturas)+2)))
+
+    if opcao == 0:
+        print(f"{AZUL}Retornando ao menu principal.{RESET}")
+    elif opcao == len(state.culturas) + 1:
+        state.culturas.clear()
+        state.cultura_ativa_idx = None
+        print(f"{VERDE}Todas as culturas deletadas.{RESET}")
+    else:
+        idx = opcao - 1
+        cultura_removida = state.culturas.pop(idx)
+        print(f"{VERDE}Cultura '{cultura_removida.cultura}' deletada.{RESET}")
+        if state.cultura_ativa_idx == idx:
+            state.cultura_ativa_idx = None
+        elif state.cultura_ativa_idx and state.cultura_ativa_idx > idx:
+            state.cultura_ativa_idx -= 1
 
 
 def exportar_csv(state: FarmData) -> None:
     """Exporta dados de plantio e insumos para CSV."""
-    if not state.cultura or state.area <= 0:
-        print(f"{VERMELHO}Não há dados válidos para exportação. Defina cultura e área.{RESET}")
+    if not state.culturas:
+        print(f"{VERMELHO}Não há dados válidos para exportação. Cadastre culturas.{RESET}")
         return
 
-    registros = [
-        {"cultura": state.cultura, "area": state.area, "tipo_insumo": "adubo", "qnt_insumo": state.insumos.adubo},
-        {"cultura": state.cultura, "area": state.area, "tipo_insumo": "agua", "qnt_insumo": state.insumos.agua},
-        {"cultura": state.cultura, "area": state.area, "tipo_insumo": "fosfato", "qnt_insumo": state.insumos.fosfato},
-    ]
+    registros = []
+    for cultura in state.culturas:
+        if cultura.cultura and cultura.area > 0:
+            registros.extend([
+                {"cultura": cultura.cultura, "area": cultura.area, "tipo_insumo": "adubo", "qnt_insumo": cultura.insumos.adubo},
+                {"cultura": cultura.cultura, "area": cultura.area, "tipo_insumo": "agua", "qnt_insumo": cultura.insumos.agua},
+                {"cultura": cultura.cultura, "area": cultura.area, "tipo_insumo": "fosfato", "qnt_insumo": cultura.insumos.fosfato},
+            ])
+
+    if not registros:
+        print(f"{VERMELHO}Não há dados válidos para exportação.{RESET}")
+        return
+
     df = pd.DataFrame(registros)
     nome_arquivo = "dados_plantio.csv"
     df.to_csv(nome_arquivo, index=False, encoding="utf-8-sig")
@@ -341,17 +445,21 @@ def main() -> None:
         opcao = menu()
         if opcao == 1:
             escolher_cultura(state)
-            calcular_area(state)
-            calcular_insumos(state)
+            if state.cultura_ativa and state.cultura_ativa.area == 0:
+                calcular_area(state)
+                calcular_insumos(state)
         elif opcao == 2:
-            if not state.cultura:
-                print(f"{VERMELHO}Defina a cultura antes de configurar insumos.{RESET}")
+            if not state.cultura_ativa:
+                print(f"{VERMELHO}Defina uma cultura ativa antes de configurar insumos.{RESET}")
                 continue
             definir_herbicida(state)
             definir_pesticida(state)
             definir_fertilizante(state)
             definir_meio_aplicacao(state)
         elif opcao == 3:
+            if not state.cultura_ativa:
+                print(f"{VERMELHO}Defina uma cultura ativa antes de calcular financeiro.{RESET}")
+                continue
             calcular_financeiro(state)
             exibir_dados(state)
         elif opcao == 4:
