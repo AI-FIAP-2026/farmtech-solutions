@@ -31,7 +31,7 @@ A interface oferece menu interativo no terminal com cores ANSI, validação de e
 `cd scr`
 `python menu_principal.py`
 
-Requisitos: Python 3.8+, pandas, R instalado com `Rscript` no PATH.
+Requisitos: Python 3.10+, pandas, R instalado com `Rscript` no PATH.
 
 
 ## 🗃 Histórico de lançamentos

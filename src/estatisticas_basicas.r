@@ -17,7 +17,7 @@ if (length(script_path) == 0) {
 } else {
   script_dir <- dirname(sub("^--file=", "", script_path))
 }
-dados <- read.csv(file.path(script_dir, "..", "dados_plantio.csv"), stringsAsFactors = FALSE)
+dados <- read.csv(file.path(script_dir, "dados_plantio.csv"), stringsAsFactors = FALSE)
 
 # Visualizar os dados
 print("Dados de plantio:")
