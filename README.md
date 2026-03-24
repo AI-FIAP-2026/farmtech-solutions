@@ -23,11 +23,12 @@ Aplicação CLI Python para gestão de culturas agrícolas com foco em soja e ca
 
 A estrutura foi refatorada para uso de dados organizados em objetos com persistência intermediária por CSV (`dados_plantio.csv`) para análise adicional em R via scripts `estatisticas_basicas.r` e `previsao_do_tempo.r`.
 
-A interface oferece menu interativo no terminal com cores ANSI, validação de entrada segura e opções de CRUD de dados. A execução produz relatórios de custos, previsão meteorológica e gráficos simples via R.
+A interface oferece menu interativo no terminal com cores ANSI, validação de entrada segura e opções de CRUD de dados direto no diretório. A execução produz relatórios de custos, previsão meteorológica e análises estatísticas sobre o cultivo.
 
 ## 🔧 Como executar o código
-
-`cd nome-diretorio-arquivo\nome-arquivo`
+`cd farmtech-solutions`
+`pip install -r requirements.txt`
+`cd scr`
 `python menu_principal.py`
 
 Requisitos: Python 3.8+, pandas, R instalado com `Rscript` no PATH.

@@ -178,6 +178,7 @@ def definir_herbicida(state: FarmData) -> None:
     if not state.cultura_ativa:
         print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
         return
+    print(f"{AZUL}Escolha o tipo de ervas daninhas:{RESET}")
     tipo = validar_int("[1] Grama rasteira, [2] Grama de folha larga: ", [1, 2])
     state.cultura_ativa.insumos.herbicida = "Glifosato" if tipo == 1 else "2,4-D"
     print(f"Herbicida: {state.cultura_ativa.insumos.herbicida}")
@@ -188,6 +189,7 @@ def definir_pesticida(state: FarmData) -> None:
     if not state.cultura_ativa:
         print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
         return
+    print(f"{AZUL}Escolha o tipo de insetos:{RESET}")
     tipo = validar_int("[1] Insetos vagens, [2] Insetos sugadores: ", [1, 2])
     state.cultura_ativa.insumos.pesticida = "Carbaryl" if tipo == 1 else "Imidacloprido"
     print(f"Pesticida: {state.cultura_ativa.insumos.pesticida}")
@@ -198,6 +200,7 @@ def definir_fertilizante(state: FarmData) -> None:
     if not state.cultura_ativa:
         print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
         return
+    print(f"{AZUL}Escolha a condição do solo:{RESET}")
     tipo = validar_int("[1] pH < 6, [2] baixa fixação biológica: ", [1, 2])
     state.cultura_ativa.insumos.fertilizante = "Calcário" if tipo == 1 else "Inoculante Rhizobium"
     print(f"Fertilizante: {state.cultura_ativa.insumos.fertilizante}")
@@ -208,13 +211,14 @@ def definir_meio_aplicacao(state: FarmData) -> None:
     if not state.cultura_ativa:
         print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
         return
+    print(f"{AZUL}Escolha o método de aplicação:{RESET}")
     tipo = validar_int("[1] Pulverizador tratorizado, [2] Drone: ", [1, 2])
     if tipo == 1:
         state.cultura_ativa.financeiro.metodo_aplicacao = "Pulverizador Tratorizado"
-        state.cultura_ativa.financeiro.gastos += 225000
+        state.cultura_ativa.financeiro.gastos = 225000
     else:
         state.cultura_ativa.financeiro.metodo_aplicacao = "Drone Agrícola"
-        state.cultura_ativa.financeiro.gastos += 15000
+        state.cultura_ativa.financeiro.gastos = 15000
     print(f"Método de aplicação: {state.cultura_ativa.financeiro.metodo_aplicacao}")
 
 
@@ -231,8 +235,16 @@ def calcular_financeiro(state: FarmData) -> None:
 
     hectares = cultura.area / 10000.0
     cultura.financeiro.area_total = cultura.area
-    cultura.financeiro.peso_total = 3.2 * hectares
-    cultura.financeiro.lucro = 6300 * hectares
+    if cultura.cultura == "cafe":
+        produtividade = 1.5  # ton/ha (valor médio simplificado)
+    elif cultura.cultura == "soja":
+        produtividade = 3.2  # ton/ha
+    else:
+        produtividade = 0.0
+    
+    receita = 6300 * hectares
+    cultura.financeiro.peso_total = produtividade * hectares
+    cultura.financeiro.lucro = receita - cultura.financeiro.gastos
 
     print(f"Peso estimado: {cultura.financeiro.peso_total:.2f} ton")
     print(f"Lucro estimado: R$ {cultura.financeiro.lucro:.2f}")
@@ -389,7 +401,7 @@ def executar_estatisticas_r() -> None:
         return
 
     try:
-        resultado = subprocess.run([rscript_path, "src/estatisticas_basicas.r"], capture_output=True, text=True, check=True)
+        resultado = subprocess.run([rscript_path, "estatisticas_basicas.r"], capture_output=True, text=True, check=True)
         print(f"{VERDE}== Estatísticas (R) =={RESET}")
         print(resultado.stdout)
     except subprocess.CalledProcessError as exc:
@@ -411,7 +423,7 @@ def consultar_previsao_tempo() -> None:
         return
 
     try:
-        resultado = subprocess.run([rscript_path, "src/previsao_do_tempo.r", cidade], capture_output=True, text=True, check=True)
+        resultado = subprocess.run([rscript_path, "previsao_do_tempo.r", cidade], capture_output=True, text=True, check=True)
         print(f"{VERDE}== Previsão do tempo (R) =={RESET}")
         print(resultado.stdout)
     except subprocess.CalledProcessError as exc:
@@ -463,7 +475,6 @@ def main() -> None:
             calcular_financeiro(state)
             exibir_dados(state)
         elif opcao == 4:
-            exportar_csv(state)
             executar_estatisticas_r()
         elif opcao == 5:
             consultar_previsao_tempo()

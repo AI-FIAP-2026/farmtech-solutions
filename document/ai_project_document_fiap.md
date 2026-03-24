@@ -12,14 +12,14 @@
 - Metodologia: análise de requerimentos -> prototipação (Python CLI) -> validação.
 
 ## 3. Desenvolvimento
-- Tecnologias: Python 3, pandas, R (httr2, jsonlite, dplyr).
+- Tecnologias: Python 3 e R
 - Modelagem: dataclasses, vetores de insumos, menu modular.
 - Roteiro: input usuário > cálculo > export CSV > R analytics.
 
 ## 4. Resultados
 - Cálculos consistentes para soja/café.
-- Ações testadas: Módulo de insumos, Financeiro, Export, R.
-- Feedback: fácil uso terminal e visual.
+- Módulos Complementares: Definição e manipulação de insumos, Financeiro e Exportação de Dados (CSV)
+- Feedback: fácil uso via terminal com cores para estilização visual.
 
 ## 5. Conclusão e próximos passos
 - Projeto opera com ciclo completo.
@@ -28,7 +28,3 @@
 ## 6. Referências
 - Open-Meteo API
 - FIAP Módulo 1
-- pandas, R httr2/jsonlite/dplyr
-
-## 7. Anexos
-- Comandos `git`, screenshots, casos de teste.
