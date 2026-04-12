@@ -15,6 +15,29 @@ VERMELHO = "\033[91m"
 NEGRITO = "\033[1m"
 RESET = "\033[0m"
 
+# Parâmetros de referência de NPK, pH e umidade para lógica de irrigação (Fase 2)
+# Fonte: recomendações agronômicas para culturas tropicais brasileiras
+PARAMETROS_CULTURAS = {
+    "soja": {
+        "ph_min": 6.0,
+        "ph_max": 7.0,
+        "umidade_min": 60.0,   # % — irrigar quando umidade estiver abaixo deste valor
+        "umidade_max": 80.0,   # % — suspender irrigação acima deste valor
+        "n_min_kg_ha": 0.0,    # Fixação biológica ativa: N mínimo no solo ≈ 0 kg/ha (botão N = adequado)
+        "p_min_mg_dm3": 18.0,  # P Mehlich-1 mínimo recomendado (mg/dm³)
+        "k_min_mg_dm3": 90.0,  # K trocável mínimo recomendado (mg/dm³)
+    },
+    "cafe": {
+        "ph_min": 5.5,
+        "ph_max": 6.5,
+        "umidade_min": 70.0,   # % — irrigar quando umidade estiver abaixo deste valor
+        "umidade_max": 80.0,   # % — suspender irrigação acima deste valor
+        "n_min_kg_ha": 200.0,  # N mínimo recomendado: 200 kg/ha/ano (botão N = adequado)
+        "p_min_mg_dm3": 8.0,   # P Mehlich-1 mínimo recomendado (mg/dm³)
+        "k_min_mg_dm3": 78.0,  # K trocável mínimo recomendado (mg/dm³)
+    },
+}
+
 
 def find_rscript():
     """Encontra o caminho do Rscript automaticamente."""
