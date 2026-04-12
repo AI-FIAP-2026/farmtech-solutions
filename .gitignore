@@ -5,3 +5,6 @@
 
 # cache
 __pycache__
+
+# dependencies
+venv
