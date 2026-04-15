@@ -1,5 +1,8 @@
-# Rafael Bassani - RM569930 - Fase X - Capítulo X
-
+# Rafael Bassani - RM569930 - Fase 2 - Capítulo 7
+#Nádia Nakamura Vieira - rm568906 - Fase 2 - Capítulo 7
+#Marco Antônio Rodrigues Siqueira - rm569975 - Fase 2 - Capítulo 7
+#Heitor Exposito de Sousa - rm566013 - Fase 2 - Capítulo 7
+#Vinicius Xavier da Silva - rm572108 - Fase 2 - Capítulo 7
 # =========================
 # 1. Pacotes
 # =========================
