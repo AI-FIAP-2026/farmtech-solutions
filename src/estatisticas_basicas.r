@@ -23,29 +23,78 @@ dados <- read.csv(file.path(script_dir, "dados_plantio.csv"), stringsAsFactors =
 print("Dados de plantio:")
 print(dados)
 
-# Cálculo de estatísticas básicas para a área plantada e quantidade de insumos
-# Estatísticas gerais:
+#1. Cálculo para a área plantada
+
 media_area <- mean(dados$area, na.rm = TRUE)
 desvio_area <- sd(dados$area, na.rm = TRUE)
 
-media_qnt_insumo <- mean(dados$qnt_insumo, na.rm = TRUE)
-desvio_qnt_insumo <- sd(dados$qnt_insumo, na.rm = TRUE)
+#2. Calculo para o lucro com base no meio de colheita
+mecanica_apenas <- subset(dados, colheita == "MECÂNICA")
+manual_apenas <- subset(dados, colheita == "MANUAL")
 
-cat("== Estatísticas Gerais ==\n")
-cat("Média da área plantada:", round(media_area, 2), "m²\n")
-cat("Desvio padrão da área plantada:", round(desvio_area, 2), "m²\n\n")
-cat("Média da quantidade de insumos:", round(media_qnt_insumo, 2), "\n")
-cat("Desvio padrão da quantidade de insumos:", round(desvio_qnt_insumo, 2), "\n\n")
+dp_peso_mecanica <- sd(mecanica_apenas$perda_peso, na.rm = TRUE)
+dp_lucro_mecanica <- sd(mecanica_apenas$lucro, na.rm = TRUE)
 
-# Caso queira ver as estatísticas separadas por cultura (Milho e Soja)
-estatisticas_por_cultura <- dados %>%
-  group_by(cultura) %>%
-  summarise(
-    media_area = mean(area, na.rm = TRUE),
-    desvio_area = sd(area, na.rm = TRUE),
-    media_qnt_insumo = mean(qnt_insumo, na.rm = TRUE),
-    desvio_qnt_insumo = sd(qnt_insumo, na.rm = TRUE)
-  )
 
-cat("== Estatísticas por Cultura ==\n")
-print(estatisticas_por_cultura)
+summary(manual_apenas$lucro)
+summary(manual_apenas$peso_perdido)
+dp_lucro_manual <- sd(manual_apenas$lucro, na.rm = TRUE)
+dp_peso_manual <- sd(manual_apenas$perda_peso, na.rm = TRUE)
+
+#3. Calculo para correlação
+
+cores <- ifelse(dados$colheita == "MECÂNICA", "slategray", "darkorange2")
+reg_lin_al <- lm(lucro ~ area, data = dados) #Regressão Linear áreaxlucro
+reg_lin_ap <- lm(peso_perdido ~ area, data = dados) #Regressão Linear áreaxpeso
+
+par(mfrow = c(1,2))
+plot(dados$area, dados$lucro,
+  col = cores,
+  pch = 16,
+  main = "Dispersão: Área x Colheita",
+  xlab = "m²",
+  ylab = "R$")
+abline(reg_lin_al, col = "#ff00ff", lwd = 2)
+legend("topleft",
+       legend = c("Mecânica", "Manual"),
+       col = c("slategray", "darkorange2"),
+       pch = 16,
+       bty = "n")
+
+plot(dados$area, dados$peso_perdido,
+  col = cores,
+  main = "Dispersão Área x Peso perdido",
+  pch = 16,
+  xlab = "m²",
+  ylab = "kg")
+abline(reg_lin_ap, col = "#ff00ff", lwd = 2 )
+legend("topleft", 
+  legend = c("Mecânica", "Manual"),
+  col = c("slategray", "darkorange2"),
+  pch = 16,
+  bty = "n")
+
+correl_mecanica <- cor(mecanica_apenas$area, mecanica_apenas$lucro)
+correl_manual <- cor(manual_apenas$area, manual_apenas$lucro)
+
+
+print("== Estatísticas Gerais Colheita MECÂNICA ==\n")
+print("LUCRO: ")
+summary(mecanica_apenas$lucro)
+print("PESO PERDIDO: ")
+summary(mecanica_apenas$peso_perdido)
+cat("Desvio Padrão lucro: ", dp_lucro_mecanica)
+cat("Desvio Padrão peso perdido: ", dp_peso_mecanica)
+cat("Dispersão Área x Lucro: ", correl_mecanica)
+
+cat("== Estatísticas Gerais Colheita Manual ==\n")
+print("LUCRO: ")
+summary(manual_apenas$lucro)
+print("PESO PERDIDO: ")
+summary(manual_apenas$peso_perdido)
+cat("Desvio Padrão lucro: ", dp_lucro_manual)
+cat("Desvio Padrão peso perdido: ", dp_peso_manual)
+cat("Dispersão Área x Lucro: ", correl_manual)
+
+
+
