@@ -1,2 +1,3 @@
 pandas
-subprocess.run
+# Opcional: habilita uso do PlatformIO via CLI
+platformio
