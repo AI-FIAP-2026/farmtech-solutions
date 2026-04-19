@@ -61,6 +61,10 @@ Simular um sistema IoT de irrigação que liga a bomba (relé) apenas quando as 
 - **Umidade do solo:** DHT22 (proxy didático)
 - **Bomba:** relé
 
+### Imagem do circuito
+
+![Imagem do circuito](assets/circuito-wokwi.png)
+
 ### Arquivos principais
 
 - `src/irrigacao.ino` (firmware ESP32)
