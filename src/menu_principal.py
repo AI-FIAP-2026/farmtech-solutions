@@ -8,6 +8,7 @@ from typing import Optional
 import pandas as pd
 
 # Caracteres ANSI para estilização no terminal
+CYAN = "\033[96m"
 VERDE = "\033[92m"
 AMARELO = "\033[93m"
 AZUL = "\033[94m"
@@ -15,6 +16,7 @@ VERMELHO = "\033[91m"
 NEGRITO = "\033[1m"
 RESET = "\033[0m"
 
+#Solução e problemas
 
 def find_rscript():
     """Encontra o caminho do Rscript automaticamente."""
@@ -59,6 +61,8 @@ class Cultura:
     area: float = 0.0
     insumos: Insumos = field(default_factory=Insumos)
     financeiro: Financeiro = field(default_factory=Financeiro)
+    status_qualidade: str = "Não analisado"
+    qual_col: str = RESET
 
 
 @dataclass
@@ -85,7 +89,6 @@ def validar_float(mensagem: str, minimo: float = 0.0) -> float:
         except ValueError as exc:
             print(f"{VERMELHO}Entrada inválida: {exc}. Tente novamente.{RESET}")
 
-
 def validar_int(mensagem: str, opcoes: Optional[list] = None) -> int:
     """Solicita um inteiro validado ao usuário."""
     while True:
@@ -97,6 +100,25 @@ def validar_int(mensagem: str, opcoes: Optional[list] = None) -> int:
         except ValueError as exc:
             print(f"{VERMELHO}Entrada inválida: {exc}. Tente novamente.{RESET}")
 
+def validar_area(area: float):
+    minimo = 100
+    maximo = 1.52e12 
+    sim = ["S", "SI", "SIM", "SS"]
+    nao = ["N", "NA", "NAO", "NN"]
+    try:
+        if area < minimo:
+             raise ValueError(f"Valor deve ser maior ou igual a 100m².")
+        elif area > maximo:
+            confirm = input(f"{AZUL}O valor digitado está correto? [S]im, [N]ao{RESET}").strip().upper()
+            if confirm in sim:
+                return area
+            elif confirm in nao:
+                return None
+            else:
+                return None
+        return area
+    except ValueError as exc:
+        print(f"{VERMELHO}Entrada inválida: {exc}. Tente novamente.{RESET}")
 
 def escolher_cultura(state: FarmData) -> None:
     """Define a cultura escolhida no estado."""
@@ -131,7 +153,6 @@ def escolher_cultura(state: FarmData) -> None:
     state.cultura_ativa_idx = len(state.culturas) - 1
     print(f"{VERDE}Nova cultura criada: {cultura_nome}{RESET}")
 
-
 def calcular_area(state: FarmData) -> None:
     """Calcula a área plantada com base na cultura."""
     if not state.cultura_ativa:
@@ -142,7 +163,12 @@ def calcular_area(state: FarmData) -> None:
     if cultura.cultura == "cafe":
         comprimento = validar_float("Comprimento (m): ", 0.01)
         largura = validar_float("Largura (m): ", 0.01)
-        cultura.area = comprimento * largura
+        area_calculada = comprimento * largura
+        area_validade = validar_area(area_calculada)
+        if area_validade is not None:
+            cultura.area = area_validade
+        else:
+            print(f"{VERMELHO}Gravação cancelada. Insira os dados novamente.{RESET}")
         print(f"{VERDE}Área do café (retângulo): {cultura.area:.2f} m²{RESET}")
     elif cultura.cultura == "soja":
         raio = validar_float("Raio (m): ", 0.01)
@@ -277,6 +303,8 @@ def exibir_dados(state: FarmData) -> None:
     print(f"{AZUL}Lucro: R$ {cultura.financeiro.lucro:.2f}{RESET}")
     print(f"{AZUL}Gastos: R$ {cultura.financeiro.gastos:.2f}{RESET}")
     print(f"{AZUL}Meio aplicação: {cultura.financeiro.metodo_aplicacao}{RESET}")
+    print(f"{VERDE}--- Qualidade ---{RESET}")
+    print(f"{cultura.qual_col}--- {cultura.status_qualidade} ---{RESET}")
 
 
 def atualizar_dados(state: FarmData) -> None:
@@ -380,12 +408,24 @@ def exportar_csv(state: FarmData) -> None:
     for cultura in state.culturas:
         if cultura.cultura and cultura.area > 0:
             registros.extend([
+                #ADUBO
                 {"cultura": cultura.cultura, "area": cultura.area,
                     "tipo_insumo": "adubo", "qnt_insumo": cultura.insumos.adubo},
+                #AGUA
                 {"cultura": cultura.cultura, "area": cultura.area,
                     "tipo_insumo": "agua", "qnt_insumo": cultura.insumos.agua},
+                #FOSFATO
                 {"cultura": cultura.cultura, "area": cultura.area,
                     "tipo_insumo": "fosfato", "qnt_insumo": cultura.insumos.fosfato},
+                #QUALIDADE
+                {"cultura": cultura.cultura, "area": cultura.area,
+                    "qualidade": cultura.status_qualidade, "cor": cultura.qual_col},
+                #LUCRO E GASTOS
+                {"cultura": cultura.cultura, "area": cultura.area,
+                    "lucro": cultura.financeiro.lucro, "gastos": cultura.financeiro.gastos},
+                {"cultura": cultura.cultura, "area": cultura.area,
+                    "metodo": cultura.financeiro.metodo_aplicacao, "peso": cultura.financeiro.peso_total}
+                    
             ])
 
     if not registros:
@@ -447,6 +487,120 @@ def consultar_previsao_tempo() -> None:
     except FileNotFoundError:
         print(f"{VERMELHO}Rscript não encontrado.{RESET}")
 
+def exibir_comparativo() -> None:
+    print(f"\n{NEGRITO}{AMARELO}=== TABELA COMPARATIVA DE MODELO ==={RESET}")
+
+    # Bloco MANUAL
+    print(f"\n{NEGRITO}[1]Irrigação Inteligente:{RESET}")
+    print(f"Eficiência             : {CYAN}95% de precisão{RESET}")
+    print(f"Custo                  : {CYAN}R$45.000{RESET}")
+    print(f"Perda Estimada (R$)    : {VERDE}R$230 por safra {RESET}")
+    print(f"Perda Estimada (kg)    : {VERDE}96kg/ha{RESET}")
+    
+    print(f"-" * 40)
+
+    # Bloco MECÂNICA
+    print(f"\n{NEGRITO}[2]Irrigação Atual:{RESET}")
+    print(f"Eficiência             : {CYAN}60% de precisão{RESET}")
+    print(f"Custo                  : {CYAN}R$N/A{RESET}")
+    print(f"Perda Estimada (R$)    : {VERDE}R$1152 por safra {RESET}")
+    print(f"Perda Estimada (kg)    : {VERDE}480kg/ha{RESET}")
+
+    print(f"{AMARELO}{'-' * 40}{RESET}\n")
+
+def solution(state: FarmData) -> None:
+    """Definir gargalos e soluções."""
+    if not state.cultura_ativa:
+        print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
+        return
+
+    if state.cultura_ativa.cultura == "cafe":
+        print(f"\n{NEGRITO}Solução Sugerida:{RESET}")
+        print(f"* Revisar processo de secagem em terreiros ou secadores.")
+        print(f"* Implementar peneiramento e separação eletrônica de grãos pretos/ardidos.")
+        print(f"{AMARELO} QUALIDADE AUMENTOU DE RUIM -> BOM{RESET}")
+        state.cultura_ativa.status_qualidade = "BOM"
+        state.cultura_ativa.qual_col = AMARELO
+    elif state.cultura_ativa.cultura == "soja":
+        exibir_comparativo()
+        escolha = validar_int("[1]IRRIGAÇÃO INTELIGENTE, [2] MODELO ATUAL: ", [1, 2])
+        if escolha == 1:
+            custo_implementacao = 4500000
+            state.cultura_ativa.financeiro.gastos += custo_implementacao
+            calcular_financeiro(state)
+            state.cultura_ativa.status_qualidade = "EXCELENTE"
+            state.cultura_ativa.qual_col = VERDE
+            print(f"{VERDE} QUALIDADE AUMENTOU DE BOM -> EXCELENTE!{RESET}")
+
+
+
+
+        # Você pode adicionar aqui a lógica de janela de plantio
+    else:
+        print(f"{VERMELHO}Cultura desconhecida.{RESET}")
+
+def problemas(state: FarmData) -> None:
+    """Definir gargalos e soluções."""
+    if not state.cultura_ativa:
+        print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
+        return
+
+    if state.cultura_ativa.cultura == "cafe":
+        tabela_defeito = {
+            "preto": 1,
+            "ardido": 2,
+            "verde": 5,
+        }
+        print(f"{CYAN}Calculo de defeito em amostra de 300g {RESET}")
+        qtd_preto = validar_float(f"{AZUL}Quantidade de grãos pretos{RESET}",1)
+        qtd_ardido = validar_float(f"{AZUL}Quantidade de grãos ardidos{RESET}",1)
+        qtd_verde = validar_float(f"{AZUL}Quantidade de grãos verdes{RESET}",1)
+
+        media_preto = (qtd_preto / tabela_defeito["preto"])
+        media_ardido = (qtd_ardido / tabela_defeito["ardido"])
+        media_verde = (qtd_verde / tabela_defeito["verde"])
+
+        total_defeito = media_ardido + media_preto + media_verde
+        if total_defeito <= 4:
+            print(f"Classificação: {VERDE}Tipo 2 (Excelente Qualidade){RESET}")
+            state.cultura_ativa.status_qualidade = "EXCELENTE"
+            state.cultura_ativa.qual_col = VERDE
+        elif total_defeito <= 26:
+            print(f"Classificação: {AMARELO}Tipo 4 (Boa Qualidade){RESET}")
+            state.cultura_ativa.status_qualidade = "BOM"
+            state.cultura_ativa.qual_col = AMARELO
+        else:
+            print(f"Classificação: {VERMELHO}Tipo 7 ou inferior (Baixa Qualidade){RESET}")
+            state.cultura_ativa.status_qualidade = "RUIM"
+            state.cultura_ativa.qual_col = VERMELHO
+            solution(state)
+
+
+
+    elif state.cultura_ativa.cultura == "soja":
+        print(f"{CYAN}Calculo de defeito da soja (umidade) {RESET}")
+        umidade = validar_int(f"{AZUL}Digite a umidade do solo em (%){RESET}")
+        umidade = umidade/100
+
+        if umidade < 20:
+            status = f"{VERMELHO}CRÍTICO: Solo muito seco. Risco de perda de sementes.{RESET}"
+            state.cultura_ativa.status_qualidade = "RUIM"
+            state.cultura_ativa.qual_col = VERMELHO
+            solution(state)
+        elif umidade >= 20 and umidade <25:
+            status = f"{AMARELO}ATENÇÃO: Umidade no limite do aceitável.{RESET}"
+            state.cultura_ativa.status_qualidade = "BOM"
+            state.cultura_ativa.qual_col = AMARELO
+        else:
+            status = f"{VERDE}FAVORÁVEL: Condições ideais para o início da semeadura.{RESET}"
+            state.cultura_ativa.status_qualidade = "EXCELENTE"
+            state.cultura_ativa.qual_col = VERDE
+        print(f"\n{NEGRITO}Parecer Técnico:{RESET}")
+        print(f"Status: {status}")
+
+        # Você pode adicionar aqui a lógica de janela de plantio
+    else:
+        print(f"{VERMELHO}Cultura desconhecida.{RESET}")
 
 def menu() -> int:
     """Exibe o menu principal e retorna opção."""
@@ -461,8 +615,9 @@ def menu() -> int:
     print("8 - Consultar Dados")
     print("9 - Atualização de Dados")
     print("10 - Deletar de Dados")
-    print(f"11 - Sair{RESET}")
-    return validar_int(f"{AZUL}Selecione a opção: {RESET}", list(range(1, 12)))
+    print("11 - Solução de problemas")
+    print(f"12 - Sair{RESET}")
+    return validar_int(f"{AZUL}Selecione a opção: {RESET}", list(range(1, 13)))
 
 
 def main() -> None:
@@ -506,6 +661,8 @@ def main() -> None:
         elif opcao == 10:
             zerar_dados(state)
         elif opcao == 11:
+            problemas(state)
+        elif opcao == 12:
             print(f"{VERDE}Encerrando aplicação. Até breve!{RESET}")
             break
 
