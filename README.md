@@ -19,20 +19,121 @@
 
 ## 📜 Descrição
 
-Aplicação CLI Python para gestão de culturas agrícolas com foco em soja e café. O sistema permite definir cultura, calcular área (retângulo/triângulo/círculo), estimar insumos (adubo, água, fosfato) e configurar produtos de manejo (herbicida/pesticida/fertilizante), além de calcular resultados financeiros (lucro/gastos).
+Este repositório consolida as entregas do projeto FarmTech Solutions em duas fases complementares:
 
-A estrutura foi refatorada para uso de dados organizados em objetos com persistência intermediária por CSV (`dados_plantio.csv`) para análise adicional em R via scripts `estatisticas_basicas.r` e `previsao_do_tempo.r`.
+- **Fase 1 (Python + R):** gestão de plantio, cálculos agronômicos e análise de dados.
+- **Fase 2 (ESP32 + Wokwi):** coleta simulada de dados NPK/pH/umidade e automação da irrigação.
 
-A interface oferece menu interativo no terminal com cores ANSI, validação de entrada segura e opções de CRUD de dados direto no diretório. A execução produz relatórios de custos, previsão meteorológica e análises estatísticas sobre o cultivo.
+## 🌱 Fase 1 - Gestão agrícola (Python + R)
 
-## 🔧 Como executar o código
-`cd farmtech-solutions`
-`pip install -r requirements.txt`
-`cd scr`
-`python menu_principal.py`
+### Objetivo
 
-Requisitos: Python 3.10+, pandas, R instalado com `Rscript` no PATH.
+Implementar um sistema de apoio à decisão para culturas de **soja** e **café**, com cálculo de área, estimativa de insumos e análises estatísticas.
 
+### Arquivos principais
+
+- `src/menu_principal.py`
+- `src/estatisticas_basicas.r`
+- `src/previsao_do_tempo.r`
+- `dados_plantio.csv`
+
+### Execução
+
+```bash
+cd farmtech-solutions
+pip install -r requirements.txt
+cd src
+python menu_principal.py
+```
+
+Requisitos: Python 3.10+, pandas e R com `Rscript` no PATH.
+
+## 💧 Fase 2 - Irrigação inteligente (ESP32 + Wokwi)
+
+### Objetivo
+
+Simular um sistema IoT de irrigação que liga a bomba (relé) apenas quando as condições de NPK, pH e umidade estiverem adequadas para a cultura ativa.
+
+### Componentes simulados
+
+- **N, P e K:** 3 botões verdes (estado binário pressionado/não pressionado)
+- **pH do solo:** LDR (conversão analógica para escala 0-14)
+- **Umidade do solo:** DHT22 (proxy didático)
+- **Bomba:** relé
+
+### Imagem do circuito
+
+![Imagem do circuito](assets/circuito-wokwi.png)
+
+### Arquivos principais
+
+- `src/irrigacao.ino` (firmware ESP32)
+- `diagram.json` (circuito Wokwi)
+- `platformio.ini` (build/configuração)
+
+### Mapeamento de pinos (ESP32)
+
+| Componente | GPIO |
+|---|---:|
+| Botão Nitrogênio (N) | 16 |
+| Botão Potássio (K) | 17 |
+| Botão Fósforo (P) | 18 |
+| LDR (AO) | 34 |
+| DHT22 (DATA) | 4 |
+| Relé (IN) | 23 |
+
+### Lógica de irrigação
+
+Os parâmetros por cultura foram definidos da seguinte forma:
+
+### Soja
+- pH: 6.0 a 7.0
+- Umidade mínima: 60%
+- Umidade máxima (referência): 80%
+
+### Café
+- pH: 5.5 a 6.5
+- Umidade mínima: 70%
+- Umidade máxima (referência): 80%
+
+Conversão de pH (via LDR):
+
+`pH = (leituraAnalogica / 4095.0) * 14.0`
+
+Regra de acionamento da bomba:
+
+`irrigar = (umidade < umidade_minima) AND (ph_minimo <= pH <= ph_maximo) AND (N AND P AND K)`
+
+### Execução via VS Code (recomendada)
+
+Fluxo principal para simular e testar o circuito sem depender de CLI:
+
+1. Instalar a extensão **Wokwi Simulator** no VS Code.
+2. Instalar a extensão **PlatformIO IDE** no VS Code.
+3. Abrir este repositório no VS Code.
+4. Usar a extensão para compilar e executar a simulação no Wokwi.
+5. Acompanhar o Serial Monitor e validar o acionamento do relé alterando N/P/K, LDR e DHT22.
+
+### Execução via CLI
+
+Se você preferir linha de comando, também é possível usar o PlatformIO Core via CLI:
+
+```bash
+cd farmtech-solutions
+pio run
+```
+
+Comandos úteis:
+
+```bash
+# Upload para placa física
+pio run -t upload
+
+# Monitor serial
+pio device monitor -b 115200
+```
+
+Requisito adicional para CLI (opcional): `platformio` disponível no ambiente Python.
 
 ## 🗃 Histórico de lançamentos
 
