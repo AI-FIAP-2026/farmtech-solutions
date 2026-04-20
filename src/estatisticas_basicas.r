@@ -15,11 +15,13 @@ library(ggplot2)
 # O CSV deve ter colunas: cultura, area, tipo_insumo, qnt_insumo
 args <- commandArgs(trailingOnly = FALSE)
 script_path <- grep("^--file=", args, value = TRUE)
+
 if (length(script_path) == 0) {
   script_dir <- getwd()
 } else {
   script_dir <- dirname(sub("^--file=", "", script_path))
 }
+
 dados <- read.csv(file.path(script_dir, "dados_plantio.csv"), stringsAsFactors = FALSE)
 
 # Visualizar os dados
@@ -56,9 +58,8 @@ pch = 16,
 col = "#9d9d9d")
 abline(modelo_drone, col = cores, lwd = 2)
 abline(modelo_trator, col = cores, lwd = 2)
-egend("topleft", legend=c("Drone", "Trator"), col=cores, lty=1, lwd=2)
+legend("topleft", legend=c("Drone", "Trator"), col=cores, lty=1, lwd=2)
 correl <- cor(dados_limpos$area, dados_limpos$lucro_total, use = "complete.obs")
-
 
 
 

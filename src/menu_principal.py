@@ -1,3 +1,4 @@
+from inserir_dados import inserir_simulacao
 import math
 import os
 import subprocess
@@ -20,19 +21,38 @@ RESET = "\033[0m"
 
 def find_rscript():
     """Encontra o caminho do Rscript automaticamente."""
+    # 1) Tenta pelo PATH
     rscript = shutil.which("Rscript")
-    if rscript:
+    if rscript and os.path.exists(rscript):
         return rscript
-    # Fallback para caminhos comuns
+
+    # 2) Tenta via variável R_HOME
+    r_home = os.environ.get("R_HOME")
+    if r_home:
+        candidatos_r_home = [
+            os.path.join(r_home, "bin", "Rscript.exe"),
+            os.path.join(r_home, "bin", "x64", "Rscript.exe"),
+        ]
+        for path in candidatos_r_home:
+            if os.path.exists(path):
+                return path
+
+    # 3) Caminhos comuns do Windows
     common_paths = [
-        r"C:\Program Files\R\R-4.5.3\bin\RScript.exe",
-        r"C:\Program Files\R\R-4.4.0\bin\RScript.exe",
-        r"C:\Program Files\R\R-4.3.0\bin\RScript.exe",
-        r"C:\R\bin\RScript.exe"
+        r"C:\Program Files\R\R-4.5.3\bin\Rscript.exe",
+        r"C:\Program Files\R\R-4.5.3\bin\x64\Rscript.exe",
+        r"C:\Program Files\R\R-4.4.0\bin\Rscript.exe",
+        r"C:\Program Files\R\R-4.4.0\bin\x64\Rscript.exe",
+        r"C:\Program Files\R\R-4.3.0\bin\Rscript.exe",
+        r"C:\Program Files\R\R-4.3.0\bin\x64\Rscript.exe",
+        r"C:\R\bin\Rscript.exe",
+        r"C:\R\bin\x64\Rscript.exe",
     ]
+
     for path in common_paths:
         if os.path.exists(path):
             return path
+
     return None
 
 
@@ -603,7 +623,6 @@ def problemas(state: FarmData) -> None:
         print(f"{VERMELHO}Cultura desconhecida.{RESET}")
 
 def menu() -> int:
-    """Exibe o menu principal e retorna opção."""
     print(f"\n{VERDE}{NEGRITO}=== MENU PRINCIPAL ==={RESET}")
     print("1 - Dados de Plantio")
     print("2 - Manipulação de Insumos (Herbicida/Pesticida/Fertilizante/Aplicação)")
@@ -616,9 +635,9 @@ def menu() -> int:
     print("9 - Atualização de Dados")
     print("10 - Deletar de Dados")
     print("11 - Solução de problemas")
-    print(f"12 - Sair{RESET}")
-    return validar_int(f"{AZUL}Selecione a opção: {RESET}", list(range(1, 13)))
-
+    print("12 - Salvar simulação no Oracle")
+    print(f"13 - Sair{RESET}")
+    return validar_int(f"{AZUL}Selecione a opção: {RESET}", list(range(1, 14)))
 
 def main() -> None:
     state = FarmData()
@@ -663,6 +682,21 @@ def main() -> None:
         elif opcao == 11:
             problemas(state)
         elif opcao == 12:
+            if not state.cultura_ativa:
+                print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
+                continue
+
+            nivel_umidade = None
+            defeitos_graos = None
+
+            if state.cultura_ativa.cultura == "soja":
+                nivel_umidade = validar_float("Informe a umidade para salvar (%): ", 0.0)
+            elif state.cultura_ativa.cultura == "cafe":
+                defeitos_graos = validar_int("Informe a contagem de defeitos de grãos: ")
+
+            inserir_simulacao(state.cultura_ativa, nivel_umidade, defeitos_graos)
+
+        elif opcao == 13:
             print(f"{VERDE}Encerrando aplicação. Até breve!{RESET}")
             break
 
