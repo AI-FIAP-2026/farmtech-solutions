@@ -32,9 +32,9 @@ Implementar um sistema de apoio à decisão para culturas de **soja** e **café*
 
 ### Arquivos principais
 
-- `src/menu_principal.py`
-- `src/estatisticas_basicas.r`
-- `src/previsao_do_tempo.r`
+- `src/fase_1/cap_1/menu_principal.py`
+- `src/fase_1/cap_1/estatisticas_basicas.r`
+- `src/fase_1/cap_1/previsao_do_tempo.r`
 - `dados_plantio.csv`
 
 ### Execução
@@ -42,17 +42,25 @@ Implementar um sistema de apoio à decisão para culturas de **soja** e **café*
 ```bash
 cd farmtech-solutions
 pip install -r requirements.txt
-cd src
+cd src/fase_1/cap_1
 python menu_principal.py
 ```
 
 Requisitos: Python 3.10+, pandas e R com `Rscript` no PATH.
 
-## 💧 Fase 2 - Irrigação inteligente (ESP32 + Wokwi)
+## 💧 Fase 2 - Campo da Inovação
 
-### Objetivo
+### Cap 1 - Irrigação Inteligente (ESP32 + Wokwi)
 
 Simular um sistema IoT de irrigação que liga a bomba (relé) apenas quando as condições de NPK, pH e umidade estiverem adequadas para a cultura ativa.
+
+### Cap 6 - Python e além (Oracle + Agroneg chosen)
+
+Sistema de gestão do agroneg chosen com Python, conexão Oracle e estruturas de dados.
+
+### Cap 7 - Ciências de Dados (R + Excel)
+
+Análise estatística de dados do agroneg com R, incluindo medidas de tendência central, dispersão e separatrizes.
 
 ### Componentes simulados
 
@@ -67,7 +75,7 @@ Simular um sistema IoT de irrigação que liga a bomba (relé) apenas quando as 
 
 ### Arquivos principais
 
-- `src/irrigacao.ino` (firmware ESP32)
+- `src/fase_2/cap_1/irrigacao.ino` (firmware ESP32)
 - `diagram.json` (circuito Wokwi)
 - `platformio.ini` (build/configuração)
 
