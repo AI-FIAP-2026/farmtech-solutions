@@ -2,10 +2,14 @@ import math
 import os
 import subprocess
 import shutil
+import json
 from dataclasses import dataclass, field
 from typing import Optional
 
 import pandas as pd
+
+from conectar_bd import conectar
+from inserir_dados import inserir_producao
 
 # Caracteres ANSI para estilização no terminal
 CYAN = "\033[96m"
@@ -438,6 +442,108 @@ def exportar_csv(state: FarmData) -> None:
     print(f"{VERDE}CSV exportado: {nome_arquivo}{RESET}")
 
 
+def carregar_config_json() -> dict:
+    """Carrega configurações da cultura de um arquivo JSON."""
+    nome_arquivo = "dados_cana.json"
+    if not os.path.exists(nome_arquivo):
+        print(f"{AMARELO}Arquivo {nome_arquivo} não encontrado. Usando padrão.{RESET}")
+        return {"cultura": "Cana-de-açúcar", "parametros": {}}
+    try:
+        with open(nome_arquivo, "r", encoding="utf-8") as f:
+            dados = json.load(f)
+        print(f"{VERDE}Configurações carregadas de {nome_arquivo}{RESET}")
+        return dados
+    except Exception as e:
+        print(f"{VERMELHO}Erro ao carregar JSON: {e}{RESET}")
+        return {}
+
+
+def exportar_json(state: FarmData) -> None:
+    """Exporta dados de plantio para JSON."""
+    if not state.culturas:
+        print(f"{VERMELHO}Não há dados válidos para exportação. Cadastre culturas.{RESET}")
+        return
+
+    dados_export = {
+        "sistema": "FarmTech Solutions - Gestão de Culturas",
+        "versao": "1.0",
+        "cultura_ativa": None,
+        "culturas": []
+    }
+
+    if state.cultura_ativa:
+        dados_export["cultura_ativa"] = {
+            "nome": state.cultura_ativa.cultura,
+            "area_m2": state.cultura_ativa.area,
+            "insumos": {
+                "adubo": state.cultura_ativa.insumos.adubo,
+                "agua_L": state.cultura_ativa.insumos.agua,
+                "fosfato_g": state.cultura_ativa.insumos.fosfato,
+                "herbicida": state.cultura_ativa.insumos.herbicida,
+                "pesticida": state.cultura_ativa.insumos.pesticida,
+                "fertilizante": state.cultura_ativa.insumos.fertilizante
+            },
+            "financeiro": {
+                "area_total": state.cultura_ativa.financeiro.area_total,
+                "peso_total_ton": state.cultura_ativa.financeiro.peso_total,
+                "lucro_R$": state.cultura_ativa.financeiro.lucro,
+                "gastos_R$": state.cultura_ativa.financeiro.gastos,
+                "metodo_aplicacao": state.cultura_ativa.financeiro.metodo_aplicacao
+            },
+            "qualidade": state.cultura_ativa.status_qualidade
+        }
+
+    for cultura in state.culturas:
+        if cultura.cultura and cultura.area > 0:
+            dados_export["culturas"].append({
+                "nome": cultura.cultura,
+                "area_m2": cultura.area,
+                "insumos": {
+                    "adubo": cultura.insumos.adubo,
+                    "agua_L": cultura.insumos.agua,
+                    "fosfato_g": cultura.insumos.fosfato
+                },
+                "qualidade": cultura.status_qualidade
+            })
+
+    nome_arquivo = "dados_plantio.json"
+    try:
+        with open(nome_arquivo, "w", encoding="utf-8") as f:
+            json.dump(dados_export, f, indent=2, ensure_ascii=False)
+        print(f"{VERDE}JSON exportado: {nome_arquivo}{RESET}")
+    except Exception as e:
+        print(f"{VERMELHO}Erro ao exportar JSON: {e}{RESET}")
+
+
+def salvar_no_banco(state: FarmData) -> None:
+    """Salva os dados da cultura ativa no banco de dados Oracle."""
+    if not state.cultura_ativa:
+        print(f"{VERMELHO}Nenhuma cultura ativa selecionada.{RESET}")
+        return
+
+    cultura = state.cultura_ativa
+    if not cultura.cultura or cultura.area <= 0:
+        print(f"{VERMELHO}Dados incompletos. Preencha os dados de plantio primeiro.{RESET}")
+        return
+
+    hectares = cultura.area / 10000.0
+
+    try:
+        inserir_producao(
+            cultura=cultura.cultura,
+            area_hectares=hectares,
+            producao_esperada=cultura.financeiro.peso_total * 1.1,
+            producao_real=cultura.financeiro.peso_total,
+            perdas_percentual=10.0,
+            tipo_colheita=cultura.financeiro.metodo_aplicacao or "Mecânica",
+            data_colheita="2026-12-31",
+            regiao="SP"
+        )
+        print(f"{VERDE}Dados salvos no banco Oracle com sucesso!{RESET}")
+    except Exception as e:
+        print(f"{VERMELHO}Erro ao salvar no banco: {e}{RESET}")
+
+
 def executar_estatisticas_r() -> None:
     """Executa script estatisticas_basicas.r com dados exportados."""
     arquivo = "dados_plantio.csv"
@@ -611,13 +717,16 @@ def menu() -> int:
     print("4 - Estatísticas Básicas (R)")
     print("5 - API Meteorológica (R)")
     print("6 - Exportar CSV")
-    print("7 - Exibir Perfil")
-    print("8 - Consultar Dados")
-    print("9 - Atualização de Dados")
-    print("10 - Deletar de Dados")
-    print("11 - Solução de problemas")
-    print(f"12 - Sair{RESET}")
-    return validar_int(f"{AZUL}Selecione a opção: {RESET}", list(range(1, 13)))
+    print("7 - Exportar JSON")
+    print("8 - Carregar Configuração JSON")
+    print("9 - Salvar no Banco Oracle")
+    print("10 - Exibir Perfil")
+    print("11 - Consultar Dados")
+    print("12 - Atualização de Dados")
+    print("13 - Deletar de Dados")
+    print("14 - Solução de problemas")
+    print(f"15 - Sair{RESET}")
+    return validar_int(f"{AZUL}Selecione a opção: {RESET}", list(range(1, 16)))
 
 
 def main() -> None:
@@ -653,16 +762,22 @@ def main() -> None:
         elif opcao == 6:
             exportar_csv(state)
         elif opcao == 7:
-            exibir_dados(state)
+            exportar_json(state)
         elif opcao == 8:
-            consultar_dados(state)
+            carregar_config_json()
         elif opcao == 9:
-            atualizar_dados(state)
+            salvar_no_banco(state)
         elif opcao == 10:
-            zerar_dados(state)
+            exibir_dados(state)
         elif opcao == 11:
-            problemas(state)
+            consultar_dados(state)
         elif opcao == 12:
+            atualizar_dados(state)
+        elif opcao == 13:
+            zerar_dados(state)
+        elif opcao == 14:
+            problemas(state)
+        elif opcao == 15:
             print(f"{VERDE}Encerrando aplicação. Até breve!{RESET}")
             break
 
