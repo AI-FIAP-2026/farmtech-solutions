@@ -10,7 +10,7 @@
 
 ## Descrição da Atividade
 
-Sistema de gestão do agroneg chosen (Cana-de-açúcar) utilizando Python com:
+Sistema de gestão da Cana-de-açúcar utilizando Python com:
 
 - **Subalgoritmos:** funções e procedimentos com passagem de parâmetros
 - **Estruturas de dados:** listas, tuplas, dicionários

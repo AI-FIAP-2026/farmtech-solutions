@@ -56,7 +56,7 @@ Simular um sistema IoT de irrigação que liga a bomba (relé) apenas quando as 
 
 ### Cap 6 - Python e além (Oracle + Agroneg chosen)
 
-Sistema de gestão do agroneg chosen com Python, conexão Oracle e estruturas de dados.
+Sistema de gestão da Cana-de-açúcar com Python, conexão Oracle e estruturas de dados.
 
 ### Cap 7 - Ciências de Dados (R + Excel)
 

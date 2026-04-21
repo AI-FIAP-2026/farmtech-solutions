@@ -9,7 +9,7 @@ from typing import Optional
 import pandas as pd
 
 from conectar_bd import conectar
-from inserir_dados import inserir_producao
+from inserir_dados import inserir_simulacao
 
 # Caracteres ANSI para estilização no terminal
 CYAN = "\033[96m"
@@ -526,18 +526,17 @@ def salvar_no_banco(state: FarmData) -> None:
         print(f"{VERMELHO}Dados incompletos. Preencha os dados de plantio primeiro.{RESET}")
         return
 
-    hectares = cultura.area / 10000.0
-
     try:
-        inserir_producao(
-            cultura=cultura.cultura,
-            area_hectares=hectares,
-            producao_esperada=cultura.financeiro.peso_total * 1.1,
-            producao_real=cultura.financeiro.peso_total,
-            perdas_percentual=10.0,
-            tipo_colheita=cultura.financeiro.metodo_aplicacao or "Mecânica",
-            data_colheita="2026-12-31",
-            regiao="SP"
+        inserir_simulacao(
+            id_simulacao=1,
+            area_m2=cultura.area,
+            metodo_colheita=cultura.financeiro.metodo_aplicacao or "Mecânica",
+            lucro=cultura.financeiro.lucro,
+            gastos=cultura.financeiro.gastos,
+            peso_total=cultura.financeiro.peso_total,
+            peso_perdido_ton=0.0,
+            peso_perdido_rs=0.0,
+            coef_correlacao=0.85
         )
         print(f"{VERDE}Dados salvos no banco Oracle com sucesso!{RESET}")
     except Exception as e:
