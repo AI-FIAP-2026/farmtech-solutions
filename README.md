@@ -54,6 +54,8 @@ Requisitos: Python 3.10+, pandas e R com `Rscript` no PATH.
 
 Simular um sistema IoT de irrigação que liga a bomba (relé) apenas quando as condições de NPK, pH e umidade estiverem adequadas para a cultura ativa.
 
+**Vídeo de demonstração:** https://youtu.be/PM_uHtUjeqE?si=ewBczBgZyheh0V8e
+
 ### Cap 6 - Python e além (Oracle + Agroneg chosen)
 
 Sistema de gestão da Cana-de-açúcar com Python, conexão Oracle e estruturas de dados.
