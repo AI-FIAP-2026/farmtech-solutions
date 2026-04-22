@@ -1,0 +1,4 @@
+pandas
+oracledb
+# Opcional: habilita uso do PlatformIO via CLI
+platformio
