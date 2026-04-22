@@ -14,7 +14,7 @@ library(readxl)
 # =========================
 # 2. Importação da base
 # =========================
-dados <- read_excel("D:/Faculdade/Fase 2/cap_7/base_dados.xlsx")
+dados <- read_excel("base_dados.xlsx")
 
 # =========================
 # 3. Conferência da base
