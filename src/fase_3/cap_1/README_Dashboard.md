@@ -11,27 +11,28 @@ Para rodar este dashboard em sua máquina, siga os passos abaixo:
 Certifique-se de ter o Python instalado. Você precisará instalar as bibliotecas necessárias. Abra o seu terminal e execute:
 
 ```bash
-pip install streamlit pandas oracledb plotly
+pip install streamlit pandas oracledb plotly python-dotenv
 
 ```
 
 ### 2. Configuração do Banco de Dados
 
-O código está configurado para conectar-se ao banco de dados da FIAP. Verifique se as variáveis no início do script (`USER`, `PASSWORD`, `DSN`) estão corretas conforme o seu ambiente:
+Crie um arquivo `.env` na raiz do projeto (ao lado deste README) com as credenciais de conexão:
 
-```python
-USER = "seu_usuario"
-PASSWORD = "sua_senha"
-DSN = "host:porta/servico"
-
+```env
+ORACLE_USER=seu_usuario
+ORACLE_PASSWORD=sua_senha
+ORACLE_DSN=host:porta/servico
 ```
+
+> Um arquivo `.env.example` está disponível no repositório como modelo — copie-o para `.env` e preencha com seus dados.
 
 ### 3. Execução
 
-No terminal, navegue até a pasta onde salvou o arquivo (ex: `app.py`) e execute o comando:
+No terminal, na raiz do projeto, execute o comando:
 
 ```bash
-streamlit run app.py
+streamlit run src/fase_3/cap_1/scripts/Dashboard.py
 
 ```
 

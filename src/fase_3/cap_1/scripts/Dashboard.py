@@ -1,18 +1,24 @@
+import os
+from pathlib import Path
+
 import streamlit as st
 import pandas as pd
 import oracledb
 import plotly.express as px
+from dotenv import load_dotenv
 
 # --- Configuração ---
-USER = "rm568906".lower()
-PASSWORD = "fiap26".lower()
-DSN = "oracle.fiap.com.br:1521/orcl" 
+load_dotenv(dotenv_path=Path(__file__).resolve().parents[4] / ".env")
+
+ORACLE_USER = os.environ["ORACLE_USER"].lower()
+ORACLE_PASSWORD = os.environ["ORACLE_PASSWORD"].lower()
+ORACLE_DSN = os.environ["ORACLE_DSN"]
 
 st.set_page_config(layout="wide", page_title="Dashboard Agrícola")
 
 @st.cache_data
 def get_data_from_oracle():
-    conn = oracledb.connect(user=USER, password=PASSWORD, dsn=DSN)
+    conn = oracledb.connect(user=ORACLE_USER, password=ORACLE_PASSWORD, dsn=ORACLE_DSN)
     query = """
         SELECT 
             c.NOME AS NOME_CLIENTE, f.LOCALIZACAO AS NOME_FAZENDA,
