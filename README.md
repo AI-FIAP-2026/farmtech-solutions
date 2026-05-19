@@ -81,6 +81,10 @@ Análise estatística de dados do agroneg com R, incluindo medidas de tendência
 - `diagram.json` (circuito Wokwi)
 - `platformio.ini` (build/configuração)
 
+### Fase 3 - Capítulo 1
+
+Fase 3 - Capítulo 1: Banco de Dados Oracle com dados de sensores agrícolas. Documentação em [src/fase_3/cap_1/README.md](src/fase_3/cap_1/README.md).
+
 ### Mapeamento de pinos (ESP32)
 
 | Componente | GPIO |
