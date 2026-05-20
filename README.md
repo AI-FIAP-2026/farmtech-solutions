@@ -19,10 +19,11 @@
 
 ## 📜 Descrição
 
-Este repositório consolida as entregas do projeto FarmTech Solutions em duas fases complementares:
+Este repositório consolida as entregas do projeto FarmTech Solutions em três fases complementares:
 
 - **Fase 1 (Python + R):** gestão de plantio, cálculos agronômicos e análise de dados.
 - **Fase 2 (ESP32 + Wokwi):** coleta simulada de dados NPK/pH/umidade e automação da irrigação.
+- **Fase 3 (Oracle + ML + Dashboard):** carga e validação de dados de sensores, modelagem preditiva e visualização interativa.
 
 ## 🌱 Fase 1 - Gestão agrícola (Python + R)
 
@@ -80,10 +81,6 @@ Análise estatística de dados do agroneg com R, incluindo medidas de tendência
 - `src/fase_2/cap_1/irrigacao.ino` (firmware ESP32)
 - `diagram.json` (circuito Wokwi)
 - `platformio.ini` (build/configuração)
-
-### Fase 3 - Capítulo 1
-
-Fase 3 - Capítulo 1: Banco de Dados Oracle com dados de sensores agrícolas. Documentação em [src/fase_3/cap_1/README.md](src/fase_3/cap_1/README.md).
 
 ### Mapeamento de pinos (ESP32)
 
@@ -149,6 +146,26 @@ pio device monitor -b 115200
 
 Requisito adicional para CLI (opcional): `platformio` disponível no ambiente Python.
 
+## 🌿 Fase 3 - Etapas de uma Máquina Agrícola
+
+### Cap 1 - Banco de Dados, ML e Dashboard
+
+Entrega integrada com três frentes complementares: banco de dados Oracle, modelagem preditiva e visualização interativa.
+
+**Banco de Dados (Oracle)**
+- Geração e carga de dados históricos de sensores (NPK, pH, umidade, bomba).
+- Validação com consultas SQL e documentação do processo.
+
+**Machine Learning**
+- Análise exploratória com gráficos e definição de perfis ideais de solo/clima.
+- Treino e comparação de 5 modelos preditivos para culturas agrícolas.
+
+**Dashboard**
+- Visualizações interativas de irrigação, reposição de nutrientes e projeção de umidade.
+- Filtros em cascata por estado, cultura, cliente e fazenda.
+
+Documentação completa em [src/fase_3/cap_1/README.md](src/fase_3/cap_1/README.md).
+
 ## 🗃 Histórico de lançamentos
 
 * 0.3.0 - 22/03/2026
@@ -158,5 +175,3 @@ Requisito adicional para CLI (opcional): `platformio` disponível no ambiente Py
 ## 📋 Licença
 
 <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/agodoi/template">MODELO GIT FIAP</a> por <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://fiap.com.br">Fiap</a> está licenciado sobre <a href="http://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Attribution 4.0 International</a>.</p>
-
-
