@@ -22,6 +22,10 @@ Arquitetura e detalhes de uso estão descritos nos módulos `src/`.
 - **CS_SENSORES_IOT**: leituras simuladas de sensores de solo geradas a partir de `CS_CLIMA`. Contém `UMIDADE_SOLO` (umidade do solo), `TEMPERATURA_SOLO`, `NUTRIENTES_N`, `SCORE_NECESSIDADE_IRRIGACAO`, `VOLUME_IRRIGACAO_ESTIMADO` e `ACAO_IRRIGACAO`.
 - **CS_CLIMA_EVENTOS**: eventos climáticos por cidade/UF/data, agregados por fazenda por meio da view `VW_EVENTOS_CLIMATICOS_FAZENDA`.
 
+## Vídeo com as entregas
+[https://youtu.be/ddQ8wB-jk9U](https://www.youtube.com/watch?v=ddQ8wB-jk9U)
+
+
 Observações importantes:
 
 - `UMIDADE_AR` (em `CS_CLIMA`) e `UMIDADE_SOLO` (em `CS_SENSORES_IOT`) são variáveis distintas: correlacionadas porém não idênticas.
