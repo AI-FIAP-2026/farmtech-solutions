@@ -28,6 +28,15 @@ Observações importantes:
 - As views `VW_EVENTOS_CLIMATICOS_FAZENDA` e `VW_DADOS_AGRICOLAS_ML` consolidam eventos por fazenda e fornecem a base final para modelos de Machine Learning.
 - Nunca coloque credenciais reais no repositório. Use `.env` local (não comitar).
 
+## Vídeos das Entregas
+
+- `Entrega 1 - [Entrega 1](https://www.youtube.com/watch?v=pPbfUXVtBOI)
+- `Entrega 2 -  [Entrega 2](https://www.youtube.com/watch?v=VYf7oJ9xeoM)
+- `Entrega 3 -  [Entrega 3](https://www.youtube.com/watch?v=QiJ5etScl1A)
+- `Entrega 4 -  [Entrega 4](https://www.youtube.com/watch?v=OC5e83rR1Zo)
+- `Todas as entregas - [Clique aqui para assistir à entrega completa!](https://www.youtube.com/watch?v=ddQ8wB-jk9U) 
+  
+
 Scripts criados:
 
 - `scripts/rebuild_sensores_iot.py`: reconstrói `CS_SENSORES_IOT` com backup automático, geração sintética de leituras e criação das views necessárias. Pede confirmação textual `CONFIRMAR` antes de recriar a tabela.
