@@ -5,13 +5,13 @@
 **Fase:** 5
 **Capítulo:** 1
 **Grupo:** H.M.N.R.V.
-**Entregável:** 1
+**Link do Repositório:** https://github.com/AI-FIAP-2026/farmtech-solutions/tree/main/src/fase_5/cap_1/Entrega_1
 
 ---
 
 ## Descrição da Atividade
 
-O projeto tem como objetivo utilizar técnicas de **Ciência de Dados e Machine Learning** para analisar condições ambientais de uma produção agrícola e prever o **rendimento das culturas**.
+O projeto tem como objetivo utilizar técnicas de **Ciência de Dados e Machine Learning** para analisar condições ambientais de uma produção agrícola e prever o **rendimento das culturas**. Além disso, o projeto inclui uma simulação de gastos para o uso de serviços da AWS
 
 O desafio consiste em explorar os dados disponíveis, identificar padrões e agrupamentos nas condições de cultivo e comparar diferentes algoritmos de regressão para determinar sua capacidade de prever a produtividade das safras.
 
