@@ -83,13 +83,25 @@ Os modelos são avaliados principalmente pelas métricas **R², MAE e RMSE**.
 
 ---
 
-## Conclusões
+## Conclusões entrega 1
 
 A análise permitiu identificar padrões nas condições ambientais por meio de técnicas de clusterização e comparar diferentes abordagens de Machine Learning para previsão do rendimento agrícola.
 
 Entre os modelos avaliados, o **KNN apresentou o melhor desempenho médio na validação cruzada**, sendo selecionado como modelo final segundo o critério estabelecido no projeto. A análise também mostrou que a **Regressão Linear apresentou desempenho competitivo no conjunto de teste**.
 
 O projeto demonstra a aplicação de técnicas de análise de dados e Machine Learning como ferramentas de apoio à compreensão e previsão da produtividade agrícola.
+
+## Conclusões entrega 2
+Apesar de a região da Virgínia apresentar o menor custo mensal, com aproximadamente US$ 10,13 contra US$ 17,38 em São Paulo, a escolha mais adequada para o projeto é a região de São Paulo.
+
+Essa decisão ocorre porque o cenário proposto considera restrições legais para o armazenamento de dados no exterior. Dessa forma, mesmo com um custo maior, manter a infraestrutura na região brasileira permite que os dados permaneçam armazenados no país, atendendo aos requisitos de residência e governança da informação.
+
+Além disso, como os dados dos sensores serão gerados e acessados no Brasil, a utilização da região de São Paulo também tende a proporcionar menor latência no envio e no processamento das informações.
+
+Portanto, a região de São Paulo foi escolhida mesmo sendo mais cara, pois atende melhor aos requisitos legais e operacionais da solução.
+
+![Comparação do custo mensal entre São Paulo e Virgínia](Images/comparacao_valor_mensal.png)
+
 
 ---
 
@@ -100,6 +112,8 @@ O projeto demonstra a aplicação de técnicas de análise de dados e Machine Le
 [Assista ao vídeo demonstrativo no YouTube](https://youtu.be/TltNFFdmXj4)
 [Acesse o Notebook no Google Colab](https://colab.research.google.com/drive/1BzJ0NwZATXmh-Px8Lpfq43qDlyaQgM6K?usp=sharing)
 
+### Entregável 2
+[Assista ao vídeo demonstrativo no YouTube](https://youtu.be/dFYQ8A1YnpE)
 
 ---
 
